@@ -47,5 +47,12 @@ Mode / A / Mode B / Mode C / Mode D
 Net data rate (Gb/s) / 1600 / 1200 / 800 / 400 
 Maximum NSR (dB) / -12.8 / -9.5 / -5.8 / -1 
 Minimum required optical power (dBm) / -22 / -23 / -25 / -28 
-Transceiver NSR (dB) / -20.0 / -20.0 / -20.0 / -20.0 
+Transceiver NSR (dB) / -20.0 / -20.0 / -20.0 / -20.0
+
+OPTIMIZATION GOAL:
+Maximize network throughput subject to the constraints on NSR and optical power of the transceivers.
+
+KEY INFORMATION:
+- at optimal launch psd the non-linear noise is half that of amplifier noise
+- NSR is additive in the linear domain (not decibels), will only need to consider non-linear NSR, amplifier NSR, Transceiver NSR.
  
