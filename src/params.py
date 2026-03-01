@@ -1,3 +1,5 @@
+import numpy as np
+
 N_2 = 2.6 * 10 ** (-20)  # m^2/W
 WAVELENGTH = 1550 * 10 ** (-9)  # m
 SYMBOL_RATE = 200  # GBaud
@@ -10,6 +12,8 @@ HV = 1.3 * 1e-19
 # Amplifier parameters
 UNSATURATED_GAIN = 25  # dB
 SATURATED_POWER = 23  # dBm
+P_SAT = SATURATED_POWER - 10 * np.log10(0.69)
+P_SAT_LINEAR = 10 ** (P_SAT / 10)
 N_SP = 2
 
 
@@ -68,4 +72,25 @@ TRANSCEIVERS = [
 ]
 
 # Network parameters
-NETWORKS = [{"name": "Network 1"}, {"name": "Network 2"}]
+NETWORKS = [
+    {
+        "name": "Network 1",
+        "total_channels": 136,
+        "links": [
+            (162, 24),
+            (162, 20),
+            (272, 25),
+            (272, 20),
+            (113, 23),
+            (113, 21),
+            (148, 23),
+            (148, 20),
+            (295, 18),
+            (295, 18),
+            (59, 19),
+            (59, 20),
+            (288, 18),
+            (288, 18),
+        ],
+    }
+]

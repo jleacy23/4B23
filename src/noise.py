@@ -79,7 +79,7 @@ def get_optimal_launch_power(amplifier_noise, C_nli, bandwidth):
     bandwidth: GHz
     """
     psd_opt = (amplifier_noise / (2 * C_nli)) ** (1 / 3)  # pJ
-    power_opt = psd_opt * bandwidth * 1e-3  # mW
+    power_opt = psd_opt * bandwidth  # mW
     power_opt_dbm = 10 * np.log10(power_opt)  # dBm
     return power_opt_dbm, psd_opt
 
@@ -107,7 +107,7 @@ def integer_span_nsr(
     return nsr * 1.5  # account for N_nli = N_ase / 2
 
 
-def excess_nsr(
+def get_excess_nsr(
     psd_opt,
     C_nli,
     amplifier_noise,
@@ -133,4 +133,27 @@ def excess_nsr(
     if add_amplifier:
         psd_rx = psd_opt * loss_linear * gain_linear
         excess_nsr += amplifier_noise / psd_rx
-    return excess_nsr
+    return 10 * np.log10(excess_nsr)
+
+
+def get_true_gain(unsaturated_gain, output_power, saturation_power):
+    """
+    unsaturated_gain: dB
+    output_power: mW
+    saturation_power: mW
+    """
+    return unsaturated_gain - 10 * np.log10(1 + output_power / saturation_power)
+
+
+def get_rx_power(power_tx, attenuation, excess_length, extra_amplfier, amplifier_gain):
+    """
+    power_tx: transmitted power / dBm
+    attenuation: dB/km
+    excess_length: km
+    extra_amplifier: bool
+    amplifier_gain: dB
+    """
+    power_rx = power_tx - attenuation * excess_length
+    if extra_amplfier:
+        power_rx += amplifier_gain
+    return power_rx

@@ -50,9 +50,9 @@ Minimum required optical power (dBm) / -22 / -23 / -25 / -28
 Transceiver NSR (dB) / -20.0 / -20.0 / -20.0 / -20.0
 
 OPTIMIZATION GOAL:
-Maximize network throughput subject to the constraints on NSR and optical power of the transceivers.
+Maximize network throughput subject to the constraints on NSR and optical power of the transceivers. 
 
 KEY INFORMATION:
-- at optimal launch psd the non-linear noise is half that of amplifier noise
-- NSR is additive in the linear domain (not decibels), will only need to consider non-linear NSR, amplifier NSR, Transceiver NSR.
+- space amplifiers such that the loss in the span between them is equal to their gain. If the resulting number of spans is not an integer, analyze the link for the integer values above and below.
+- optimal launch power can be found from a single span, consisting of a length of fiber = link lenghth / number of spans and a single amplifier.
  

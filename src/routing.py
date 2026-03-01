@@ -495,7 +495,5 @@ if __name__ == "__main__":
     print_channel_summary(channels, max_channels=MAX_CHANNELS)
     check_link_channel_usage(channels, max_channels=MAX_CHANNELS)
 
-    CHANNEL_CAPACITY = 1.6  # Tbps per channel
-
-    total_capacity = sum(channels.values()) * CHANNEL_CAPACITY
-    print(f"\nTotal assigned capacity: {total_capacity:.1f} Tbps")
+    total_channels = sum(channels.values())
+    print(f"\nTotal assigned channels: {total_channels}")
