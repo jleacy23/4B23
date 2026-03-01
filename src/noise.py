@@ -1,84 +1,136 @@
 import numpy as np
 
 
-def non_linear_coefficient(A_eff, n_2, wavelength):
-    """Returns the non-linear coefficient gamma
-    Parameters
-    A_eff: effective area of the fiber [m^2]
-    n_2: non_linear refractive index [m^2/W]
-    wavelength: wavelength of the signal [m]
+def get_span_length(attenuation, gain):
     """
-    c = 3e8
-    return (2 * np.pi * n_2) / (wavelength * c * A_eff)
+    span length to allow EDFA to compensate for the loss
 
-
-def effective_length(alpha, length):
-    """Returns the effective length of the fiber
-    Parameters
-    alpha: attenuation of the fiber [dB/km]
-    length: length of the fiber [km]
+    attenuation: dB/km
+    gain: dB
     """
-    alpha_nepers = 0.23 * alpha
-    return (1 - np.exp(-alpha_nepers * length)) / alpha_nepers
+    return gain / attenuation  # km
 
 
-def get_C_nli(alpha, dispersion, length, bandwidth, A_eff, n_2, wavelength):
-    """Returns C_nli
-    Parameters
-    alpha: attenuation of the fiber [dB/km]
-    dispersion: dispersion of the fiber [ps/nm/km]
-    length: length of the fiber [km]
-    bandwidth: bandwidth of the channel [Hz]
-    A_eff: effective area of the fiber [m^2]
-    n_2: non_linear refractive index [m^2/W]
-    wavelength: wavelength of the signal [m]
+def get_num_spans(link_length, span_length):
     """
-    alpha_nepers = 0.23 * alpha
-    beta_2 = 1 / 0.78 * dispersion * 1e-27  # ps^2/km -> s^2/m
-    L_eff = effective_length(alpha, length) * 1e3  # km -> m
-    gamma = non_linear_coefficient(A_eff, n_2, wavelength)
-    return (
-        (8 * gamma**2 * L_eff**2 * alpha_nepers)
+    link_length: km
+    span_length: km
+    """
+    spans = link_length / span_length
+    int_spans = np.floor(spans)
+    excess = (spans - int_spans) * span_length
+    return int_spans, excess  # -, km
+
+
+def get_gamma(n2, wavelength, effective_area):
+    """
+    n2: m^2/W
+    wavelength: m
+    effective_area: m^2
+    """
+    k = 2 * np.pi / wavelength  # m^-1
+    return (k * n2 / effective_area) * 1e3  # W^-1 km^-1
+
+
+def get_effective_length(length, attenuation):
+    """
+    length: km
+    attenuation: dB/km
+    """
+    attenuation_nepers = 0.23 * attenuation
+    l_eff = (1 - np.exp(-attenuation_nepers * length)) / attenuation_nepers  # km
+    return l_eff
+
+
+def get_C_nli(gamma, attenuation, dispersion, effective_length, bandwidth):
+    """
+    gamma: W^-1 m^-1
+    attenuation: dB/km
+    dispersion: ps/nm/km
+    effective_length: km
+    bandwidth: GHz
+    """
+    attenuation_nepers = 0.23 * attenuation  # km^-1
+    beta_2 = 1 / 0.78 * dispersion  # ps^2/km
+
+    C_nli = (
+        (8 * gamma**2 * effective_length**2 * attenuation_nepers)
         / (27 * np.pi * beta_2)
-        * np.log(beta_2 / alpha_nepers * np.pi**2 * bandwidth**2)
-    )
+        * np.log(beta_2 * np.pi**2 * (bandwidth * 1e-3) ** 2 / attenuation_nepers)
+    )  # pJ^-2
+
+    return C_nli
 
 
-def amplifier_noise(gain, n_sp):
-    """Returns the power spectral density of an amplifier
-    Parameters
-    gain: gain of the amplifier [dB]
-    n_sp: spontaneous emission factor
+def get_amplifier_noise(n_sp, hv, gain):
+    """
+    n_sp: population inversion factor
+    hv: photon energy /J
+    gain: amplifier gain /dB
     """
     gain_linear = 10 ** (gain / 10)
-    hv = 1.3 * 10 ** (-19)  # J
-    return 2 * n_sp * hv * (gain_linear - 1)  # W/Hz
+    return 2 * n_sp * hv * (gain_linear - 1) * 1e12  # pJ
 
 
-def optimal_launch_psd(
-    gain, n_sp, alpha, dispersion, length, bandwidth, A_eff, n_2, wavelength
+def get_optimal_launch_power(amplifier_noise, C_nli, bandwidth):
+    """
+    amplifier_noise: psd of amplifier noise /pJ
+    C_nli: pJ^-2
+    bandwidth: GHz
+    """
+    psd_opt = (amplifier_noise / (2 * C_nli)) ** (1 / 3)  # pJ
+    power_opt = psd_opt * bandwidth * 1e-3  # mW
+    power_opt_dbm = 10 * np.log10(power_opt)  # dBm
+    return power_opt_dbm, psd_opt
+
+
+def integer_span_nsr(
+    amplifier_gain, opt_launch_power, num_spans, n_sp, symbol_rate, hv
 ):
-    """Returns the optimal launch power spectral density
-    Parameters
-    gain: gain of the amplifier [dB]
-    n_sp: spontaneous emission factor
-    alpha: attenuation of the fiber [dB/km]
-    dispersion: dispersion of the fiber [ps/nm/km]
-    length: length of the fiber [km]
-    bandwidth: bandwidth of the channel [Hz]
-    A_eff: effective area of the fiber [m^2]
-    n_2: non_linear refractive index [m^2/W]
-    wavelength: wavelength of the signal [m]
     """
-    N_ase = amplifier_noise(gain, n_sp)
-    C_nli = get_C_nli(alpha, dispersion, length, bandwidth, A_eff, n_2, wavelength)
-    return (N_ase / (2 * C_nli)) ** (1 / 3)  # W/Hz
+    amplifier_gain: dB
+    opt_launch_power: dBm
+    num_spans: number of full spans in the link
+    n_sp: population inversion factor
+    symbol_rate: GBd
+    hv: photon energy /J
+    """
+    noise_factor = 10 * np.log10(2 * n_sp)
+    symbol_rate_bd = symbol_rate * 1e9
+    nsr = (
+        noise_factor
+        + 10 * np.log10(num_spans)
+        + amplifier_gain
+        + 10 * np.log10(symbol_rate_bd * hv * 1e3)
+        - opt_launch_power
+    )  # dB
+    return nsr * 1.5  # account for N_nli = N_ase / 2
 
 
-def get_span_length(alpha, gain):
-    """Returns the span length for a given gain and attenuation
-    Parameters
-    alpha: attenuation of the fiber [dB/km]
-    gain: gain of the amplifier [dB]
+def excess_nsr(
+    psd_opt,
+    C_nli,
+    amplifier_noise,
+    amplifier_gain,
+    add_amplifier,
+    excess_length,
+    attenuation,
+):
     """
-    return gain / alpha  # km
+    psd_opt: optimum launch psd /pJ
+    C_nli: C_nli of the excess length /pJ^-2
+    amplifier_noise: psd of amplifier noise /pJ
+    amplifier_gain: dB
+    add_amplifier: bool to determine if amplifier added at end of span
+    excess_length: km
+    attenuation: dB/km
+    """
+
+    loss = excess_length * attenuation  # dB
+    loss_linear = 10 ** (-loss / 10)
+    gain_linear = 10 ** (amplifier_gain / 10)
+    excess_nsr = C_nli * psd_opt**2  # assume noise applied at input
+    if add_amplifier:
+        psd_rx = psd_opt * loss_linear * gain_linear
+        excess_nsr += amplifier_noise / psd_rx
+    return excess_nsr
