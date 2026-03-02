@@ -104,7 +104,8 @@ def integer_span_nsr(
         + 10 * np.log10(symbol_rate_bd * hv * 1e3)
         - opt_launch_power
     )  # dB
-    return nsr * 1.5  # account for N_nli = N_ase / 2
+    nsr_linear = 10 ** (nsr / 10)
+    return 10 * np.log10(nsr_linear * 1.5)  # account for N_nli = N_ase / 2
 
 
 def get_excess_nsr(
