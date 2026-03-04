@@ -30,6 +30,7 @@ for network in NETWORKS:
             )
 
             nsr_table = []
+            amplifiers_used = 0
             total_length = 0
 
             for distance, channels in network["links"]:
@@ -111,6 +112,7 @@ for network in NETWORKS:
                     valid = False
                 nsr_table.append(total_nsr)
                 total_length += distance
+                amplifiers_used += spans + (1 if extra_amplifier else 0)
 
             capacity = total_channels * data_rate
             results[(network["name"], fiber["type"], transceiver["type"])] = (
@@ -118,24 +120,32 @@ for network in NETWORKS:
                 capacity,
                 nsr_table,
                 total_length,
+                amplifiers_used,
             )
 
-# choose result with highest capacity that is valid for each network, show capacity in result
+# choose result with highest capacity that is valid for each network, amplifiers used as tie breaker.
 final_results = {}
 for network in NETWORKS:
     best_capacity = 0
+    best_amplifiers_used = float("inf")
     best_result = None
     for fiber in FIBERS:
         for transceiver in TRANSCEIVERS:
             result = results[(network["name"], fiber["type"], transceiver["type"])]
-            if result[0] and result[1] > best_capacity:
+            if (
+                result[0]
+                and result[1] > best_capacity
+                and result[4] < best_amplifiers_used
+            ):
                 best_capacity = result[1]
+                best_amplifiers_used = result[4]
                 best_result = (
                     fiber["type"],
                     transceiver["type"],
                     best_capacity,
                     result[2],
                     result[3],
+                    result[4],
                 )
     final_results[network["name"]] = best_result
 
@@ -145,10 +155,12 @@ for network_name, (
     capacity,
     nsr_table,
     total_length,
+    amplifiers_used,
 ) in final_results.items():
     print(f"Best result for {network_name}:")
     print(f"    Fiber type: {fiber_type}")
     print(f"    Transceiver type: {transceiver_type}")
     print(f"    Capacity: {capacity} Tbps")
     print(f"    NSR table: {nsr_table}")
-    print(f"    Total length: {total_length} km\n")
+    print(f"    Total length: {total_length} km")
+    print(f"    Amplifiers used: {amplifiers_used}\n")
