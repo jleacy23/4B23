@@ -175,7 +175,23 @@ def optimize_traffic_routing(
 
     objective = cp.Minimize(u)
     problem = cp.Problem(objective, constraints)
-    problem.solve(solver=cp.CLARABEL)
+
+    # Choose solver based on problem type
+    if min_split_fraction > 0:
+        # MIP problem - try MIP-capable solvers in order of preference
+        # Install with: pip install cvxpy[CBC] or cvxpy[SCIP] or cvxpy[GLPK]
+        for solver in [cp.SCIP, cp.CBC, cp.GLPK_MI]:
+            if solver in cp.installed_solvers():
+                problem.solve(solver=solver)
+                break
+        else:
+            raise RuntimeError(
+                "Mixed-integer problem requires a MIP solver (SCIP, CBC, or GLPK_MI). "
+                "Install with: pip install cvxpy[CBC] or cvxpy[SCIP]"
+            )
+    else:
+        # Continuous LP - use CLARABEL
+        problem.solve(solver=cp.CLARABEL)
 
     # ------------------------------------------------------------------
     # 4. Package results
@@ -416,82 +432,126 @@ def check_link_channel_usage(channel_assignments: dict, max_channels: int) -> di
 
 
 # ---------------------------------------------------------------------------
+# Network parameter generation
+# ---------------------------------------------------------------------------
+
+
+def generate_network_params(
+    name: str,
+    edges: list,
+    demands: dict,
+    max_channels: int = 25,
+    max_paths: int = 8,
+    min_split_fraction: float = 0.0,
+) -> dict:
+    """
+    Generate network parameters from graph edges and traffic demands.
+
+    Parameters
+    ----------
+    name : str
+        Network name.
+    edges : list of (str, str, float)
+        Undirected edges as (node_a, node_b, distance_km).
+    demands : dict
+        Traffic demands {(src, dst): volume}.
+    max_channels : int
+        Maximum channels per link (EDFA limit).
+    max_paths : int
+        Maximum candidate paths per demand pair.
+    min_split_fraction : float
+        Minimum traffic fraction for a path to carry.
+
+    Returns
+    -------
+    dict
+        Network parameters with keys: name, total_channels, links, routes.
+        - links: list of (distance, channels) for each active directed edge
+        - routes: list of tuples of link indices each route passes through
+    """
+    # Build directed graph from undirected edges
+    graph = nx.DiGraph()
+    edge_distances = {}
+    directed_edge_order = []
+    for a, b, dist in edges:
+        graph.add_edge(a, b, capacity=1)
+        graph.add_edge(b, a, capacity=1)
+        edge_distances[(a, b)] = dist
+        edge_distances[(b, a)] = dist
+        directed_edge_order.append((a, b))
+        directed_edge_order.append((b, a))
+
+    # Run traffic optimization
+    result = optimize_traffic_routing(
+        graph=graph,
+        demands=demands,
+        capacity_attr="capacity",
+        max_paths=max_paths,
+        min_split_fraction=min_split_fraction,
+    )
+
+    if result.status not in ("optimal", "optimal_inaccurate"):
+        raise RuntimeError(f"Optimization failed for {name}: {result.status}")
+
+    result.print_summary()
+
+    # Assign channels to routes
+    channel_assignments = assign_channels(result, demands, max_channels=max_channels)
+    print_channel_summary(channel_assignments, max_channels=max_channels)
+
+    # Compute per-link channel counts
+    link_channel_counts = {}
+    for (src, dst, path), ch in channel_assignments.items():
+        for u, v in zip(path[:-1], path[1:]):
+            link_channel_counts[(u, v)] = link_channel_counts.get((u, v), 0) + ch
+
+    check_link_channel_usage(channel_assignments, max_channels=max_channels)
+
+    # Build links list (only active links with channels > 0)
+    active_edges = [
+        (u, v) for u, v in directed_edge_order if link_channel_counts.get((u, v), 0) > 0
+    ]
+    links = [
+        (edge_distances[(u, v)], link_channel_counts[(u, v)]) for u, v in active_edges
+    ]
+
+    # Build link index mapping for routes
+    link_index = {edge: i for i, edge in enumerate(active_edges)}
+
+    # Build routes: each route is a tuple (link_indices, channels)
+    routes = []
+    for (src, dst, path), ch in channel_assignments.items():
+        link_indices = tuple(link_index[(u, v)] for u, v in zip(path[:-1], path[1:]))
+        routes.append((link_indices, ch))
+
+    total_channels = sum(channel_assignments.values())
+    print(f"\nTotal assigned channels for {name}: {total_channels}")
+
+    return {
+        "name": name,
+        "total_channels": total_channels,
+        "links": links,
+        "routes": routes,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Example usage
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # -------------------------------------------------------------------
-    # Define your network here
-    # -------------------------------------------------------------------
+    from params import NETWORK_CONFIGS, DEMANDS, N_CHANNELS
 
-    # Directed graph: add an edge in each direction for bidirectional links.
-    # Each edge needs a 'capacity' value (use any consistent unit, e.g. Gbps,
-    # or just a normalised value between 0 and 1).
-    G = nx.DiGraph()
-
-    # Edges: (from, to, capacity)
-    edges = [
-        ("A", "B", 1),
-        ("A", "C", 1),
-        ("A", "E", 1),
-        ("B", "A", 1),
-        ("B", "C", 1),
-        ("C", "A", 1),
-        ("C", "B", 1),
-        ("C", "D", 1),
-        ("D", "C", 1),
-        ("D", "E", 1),
-        ("E", "A", 1),
-        ("E", "D", 1),
-    ]
-    for u, v, cap in edges:
-        G.add_edge(u, v, capacity=cap)
-
-    # Demands: {(source, destination): traffic_volume}
-    # Use the same units as capacity (e.g. Gbps), or normalised fractions.
-    demands = {
-        ("A", "B"): 0.12,
-        ("A", "C"): 0.09,
-        ("A", "D"): 0.06,
-        ("B", "A"): 0.12,
-        ("B", "C"): 0.04,
-        ("B", "D"): 0.03,
-        ("B", "E"): 0.03,
-        ("C", "A"): 0.09,
-        ("C", "B"): 0.04,
-        ("C", "D"): 0.02,
-        ("C", "E"): 0.02,
-        ("D", "A"): 0.06,
-        ("D", "B"): 0.03,
-        ("D", "C"): 0.02,
-        ("D", "E"): 0.02,
-        ("E", "A"): 0.07,
-        ("E", "B"): 0.03,
-        ("E", "C"): 0.02,
-        ("E", "D"): 0.02,
-    }
-
-    # -------------------------------------------------------------------
-    # Run optimisation
-    # -------------------------------------------------------------------
-    result = optimize_traffic_routing(
-        graph=G,
-        demands=demands,
-        capacity_attr="capacity",
-        max_paths=6,
-        min_split_fraction=0.0,  # Set e.g. 0.05 to avoid splits < 5%
-    )
-
-    result.print_summary()
-
-    # -------------------------------------------------------------------
-    # Assign channels
-    # -------------------------------------------------------------------
-    MAX_CHANNELS = 25
-
-    channels = assign_channels(result, demands, max_channels=MAX_CHANNELS)
-    print_channel_summary(channels, max_channels=MAX_CHANNELS)
-    check_link_channel_usage(channels, max_channels=MAX_CHANNELS)
-
-    total_channels = sum(channels.values())
-    print(f"\nTotal assigned channels: {total_channels}")
+    for config in NETWORK_CONFIGS:
+        network = generate_network_params(
+            name=config["name"],
+            edges=config["edges"],
+            demands=DEMANDS,
+            max_channels=N_CHANNELS,
+            max_paths=config["max_paths"],
+            min_split_fraction=config["min_split_fraction"],
+        )
+        print(f"\nGenerated parameters for {network['name']}:")
+        print(f"  Total channels: {network['total_channels']}")
+        print(f"  Links: {network['links']}")
+        print(f"  Routes: {network['routes']}")

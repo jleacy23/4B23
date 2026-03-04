@@ -109,13 +109,8 @@ def integer_span_nsr(
 
 
 def get_excess_nsr(
-    psd_opt,
+    psd_tx,
     C_nli,
-    amplifier_noise,
-    amplifier_gain,
-    add_amplifier,
-    excess_length,
-    attenuation,
 ):
     """
     psd_opt: optimum launch psd /pJ
@@ -126,15 +121,26 @@ def get_excess_nsr(
     excess_length: km
     attenuation: dB/km
     """
-
-    loss = excess_length * attenuation  # dB
-    loss_linear = 10 ** (-loss / 10)
-    gain_linear = 10 ** (amplifier_gain / 10)
-    excess_nsr = C_nli * psd_opt**2  # assume noise applied at input
-    if add_amplifier:
-        psd_rx = psd_opt * loss_linear * gain_linear
-        excess_nsr += amplifier_noise / psd_rx
+    excess_nsr = C_nli * psd_tx**2  # assume noise applied at input
     return 10 * np.log10(excess_nsr)
+
+
+def get_amp_nsr(
+    amp_noise_psd,
+    bandwidth,
+    pow_rx,
+    gain,
+):
+    """
+    amp_noise_psd : amplifier noise PSD /pJ
+    bandwidth: GHz
+    pow_rx: input power to amplifier /mW
+    gain: amplifier gain /dB
+    """
+    noise = amp_noise_psd * bandwidth  # mW
+    gain_linear = 10 ** (gain / 10)
+    nsr = noise / (gain_linear * pow_rx)
+    return nsr
 
 
 def get_true_gain(unsaturated_gain, output_power, saturation_power):

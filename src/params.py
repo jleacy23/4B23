@@ -71,43 +71,56 @@ TRANSCEIVERS = [
     },
 ]
 
-# Network parameters
-NETWORKS = [
+# Network graph definitions
+NETWORK_CONFIGS = [
     {
         "name": "Network 1",
-        "total_channels": 136,
-        "links": [
-            (162, 24),
-            (162, 20),
-            (272, 25),
-            (272, 20),
-            (113, 23),
-            (113, 21),
-            (148, 23),
-            (148, 20),
-            (295, 18),
-            (295, 18),
-            (59, 19),
-            (59, 20),
-            (288, 18),
-            (288, 18),
+        "edges": [
+            ("London", "Birmingham", 162),
+            ("London", "Leeds", 272),
+            ("Birmingham", "Leeds", 113),
+            ("Birmingham", "Manchester", 148),
+            ("Manchester", "Leeds", 59),
+            ("Manchester", "Glasgow", 295),
+            ("Glasgow", "Leeds", 288),
         ],
+        "max_paths": 6,
+        "min_split_fraction": 0.05,
     },
     {
         "name": "Network 2",
-        "total_channels": 197,
-        "links": [
-            (272, 25),
-            (288, 24),
-            (162, 24),
-            (262, 24),
-            (288, 24),
-            (162, 24),
-            (262, 24),
-            (113, 23),
-            (295, 23),
-            (295, 23),
-            (272, 10),
+        "edges": [
+            ("London", "Birmingham", 162),
+            ("London", "Leeds", 272),
+            ("London", "Manchester", 262),
+            ("Birmingham", "Manchester", 148),
+            ("Manchester", "Glasgow", 295),
+            ("Glasgow", "Leeds", 288),
         ],
+        "max_paths": 6,
+        "min_split_fraction": 0.05,
     },
 ]
+
+# Traffic demands between city pairs
+DEMANDS = {
+    ("London", "Birmingham"): 0.12,
+    ("London", "Manchester"): 0.09,
+    ("London", "Glasgow"): 0.06,
+    ("Birmingham", "London"): 0.12,
+    ("Birmingham", "Manchester"): 0.04,
+    ("Birmingham", "Glasgow"): 0.03,
+    ("Birmingham", "Leeds"): 0.03,
+    ("Manchester", "London"): 0.09,
+    ("Manchester", "Birmingham"): 0.04,
+    ("Manchester", "Glasgow"): 0.02,
+    ("Manchester", "Leeds"): 0.02,
+    ("Glasgow", "London"): 0.06,
+    ("Glasgow", "Birmingham"): 0.03,
+    ("Glasgow", "Manchester"): 0.02,
+    ("Glasgow", "Leeds"): 0.02,
+    ("Leeds", "London"): 0.07,
+    ("Leeds", "Birmingham"): 0.03,
+    ("Leeds", "Manchester"): 0.02,
+    ("Leeds", "Glasgow"): 0.02,
+}
