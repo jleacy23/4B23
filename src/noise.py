@@ -1,27 +1,6 @@
 import numpy as np
 
 
-def get_span_length(attenuation, gain):
-    """
-    span length to allow EDFA to compensate for the loss
-
-    attenuation: dB/km
-    gain: dB
-    """
-    return gain / attenuation  # km
-
-
-def get_num_spans(link_length, span_length):
-    """
-    link_length: km
-    span_length: km
-    """
-    spans = link_length / span_length
-    int_spans = np.floor(spans)
-    excess = (spans - int_spans) * span_length
-    return int_spans, excess  # -, km
-
-
 def get_gamma(n2, wavelength, effective_area):
     """
     n2: m^2/W
@@ -72,74 +51,53 @@ def get_amplifier_noise(n_sp, hv, gain):
     return 2 * n_sp * hv * (gain_linear - 1) * 1e12  # pJ
 
 
-def get_optimal_launch_power(amplifier_noise, C_nli, bandwidth):
-    """
-    amplifier_noise: psd of amplifier noise /pJ
-    C_nli: pJ^-2
-    bandwidth: GHz
-    """
-    psd_opt = (amplifier_noise / (2 * C_nli)) ** (1 / 3)  # pJ
-    power_opt = psd_opt * bandwidth  # mW
-    power_opt_dbm = 10 * np.log10(power_opt)  # dBm
-    return power_opt_dbm, psd_opt
-
-
-def integer_span_nsr(
-    amplifier_gain, opt_launch_power, num_spans, n_sp, symbol_rate, hv
-):
+def link_nsr_amps(amplifier_gain, psd_tx, num_spans, n_sp, symbol_rate, hv):
     """
     amplifier_gain: dB
-    opt_launch_power: dBm
+    psd_tx: pJ
     num_spans: number of full spans in the link
     n_sp: population inversion factor
     symbol_rate: GBd
     hv: photon energy /J
     """
     noise_factor = 10 * np.log10(2 * n_sp)
+    pow_tx = 10 * np.log10(psd_tx * symbol_rate)  # dBm
     symbol_rate_bd = symbol_rate * 1e9
+
     nsr = (
         noise_factor
         + 10 * np.log10(num_spans)
         + amplifier_gain
         + 10 * np.log10(symbol_rate_bd * hv * 1e3)
-        - opt_launch_power
+        - pow_tx
     )  # dB
     nsr_linear = 10 ** (nsr / 10)
-    return 10 * np.log10(nsr_linear * 1.5)  # account for N_nli = N_ase / 2
+    return nsr_linear
 
 
-def get_excess_nsr(
-    psd_tx,
-    C_nli,
-):
+def link_nsr_nli(C_nli, psd_tx, num_spans):
     """
-    psd_opt: optimum launch psd /pJ
-    C_nli: C_nli of the excess length /pJ^-2
-    amplifier_noise: psd of amplifier noise /pJ
-    amplifier_gain: dB
-    add_amplifier: bool to determine if amplifier added at end of span
-    excess_length: km
-    attenuation: dB/km
+    C_nli: non-linear coefficient of a span pJ^-2
+    psd_tx: pJ
+    num_spans: number of spans on a link
     """
-    excess_nsr = C_nli * psd_tx**2  # assume noise applied at input
-    return 10 * np.log10(excess_nsr)
+    nsr_span = C_nli * psd_tx**2
+    nsr_total = num_spans * nsr_span
+    return nsr_total  # linear
 
 
 def get_amp_nsr(
     amp_noise_psd,
-    bandwidth,
-    pow_rx,
+    psd_rx,
     gain,
 ):
     """
     amp_noise_psd : amplifier noise PSD /pJ
-    bandwidth: GHz
-    pow_rx: input power to amplifier /mW
+    psd_rx: input power to amplifier /mW
     gain: amplifier gain /dB
     """
-    noise = amp_noise_psd * bandwidth  # mW
     gain_linear = 10 ** (gain / 10)
-    nsr = noise / (gain_linear * pow_rx)
+    nsr = amp_noise_psd / (gain_linear * psd_rx)
     return nsr
 
 
@@ -152,15 +110,49 @@ def get_true_gain(unsaturated_gain, output_power, saturation_power):
     return unsaturated_gain - 10 * np.log10(1 + output_power / saturation_power)
 
 
-def get_rx_power(power_tx, attenuation, excess_length, extra_amplfier, amplifier_gain):
+def get_pow_rx(attenuation, span_length, gain, num_spans, pow_tx):
     """
-    power_tx: transmitted power / dBm
     attenuation: dB/km
-    excess_length: km
-    extra_amplifier: bool
-    amplifier_gain: dB
+    span_length: km
+    gain: true amplfier gain /dB
+    num_spans: number of spans on link
+    pow_tx: transmitted power /dBm
     """
-    power_rx = power_tx - attenuation * excess_length
-    if extra_amplfier:
-        power_rx += amplifier_gain
-    return power_rx
+
+    gain_per_span = gain - attenuation * span_length  # dB
+    gain = gain_per_span + 10 * np.log10(num_spans)
+    pow_rx = pow_tx + gain
+    return pow_rx
+
+
+def get_opt_ptx(C_nli, N_ase, bandwidth):
+    """
+    C_nli: non-linear coefficient of span /pj^-2
+    N_ase: amplifier noise PSD /pJ
+    bandwidth: GHz
+    """
+
+    psd_opt = (N_ase / (2 * C_nli)) ** (1 / 3)  # pJ
+    ptx_opt_linear = psd_opt * bandwidth  # mw
+    ptx_opt = 10 * np.log10(ptx_opt_linear)
+
+    return psd_opt, ptx_opt_linear, ptx_opt
+
+
+def get_ptx_from_gain(gain_req, unsaturated_gain, p_sat, bandwidth, num_channels):
+    """
+    gain_req: required gain /dB
+    unsaturated_gain: dB
+    p_sat: saturation power /mW
+    bandwidth: GHz
+    num_channels: number of channels
+    """
+    if gain_req > unsaturated_gain:
+        print("Warning: required gain is above the unsaturated gain")
+        ratio = 2
+    else:
+        ratio = 10 ** ((unsaturated_gain - gain_req) / 10)
+    ptx_total_linear = (ratio - 1) * p_sat  # mW
+    ptx_linear = ptx_total_linear / num_channels
+    psd_linear = ptx_linear / bandwidth
+    return psd_linear, ptx_linear, 10 * np.log10(ptx_linear)

@@ -3,226 +3,277 @@ from src.noise import *
 from src.params import *
 from src.routing import generate_network_params
 
-# Generate network parameters from routing optimization
-NETWORKS = []
-for config in NETWORK_CONFIGS:
-    network = generate_network_params(
-        name=config["name"],
-        edges=config["edges"],
-        demands=DEMANDS,
-        max_channels=N_CHANNELS,
-        max_paths=config["max_paths"],
-        min_split_fraction=config["min_split_fraction"],
-    )
-    NETWORKS.append(network)
 
-# ===========================================================================
-# Phase 1: Pre-compute per-link properties for each fiber type
-#   For each (network, fiber): opt_ptx, opt_psd, rx_power (no final amp),
-#   link NSR (no final amp), number of in-link amplifiers (spans)
-# ===========================================================================
+def build_networks(configs, excluded_edge=None):
+    """
+    Generate network parameter dicts from NETWORK_CONFIGS.
+    If excluded_edge is (config_idx, edge_idx), that undirected edge is omitted.
+    Returns None for a network if routing fails (e.g. disconnected graph).
+    """
+    networks = []
+    for ci, config in enumerate(configs):
+        edges = config["edges"]
+        if excluded_edge is not None and excluded_edge[0] == ci:
+            edges = [e for i, e in enumerate(edges) if i != excluded_edge[1]]
+        try:
+            network = generate_network_params(
+                name=config["name"],
+                edges=edges,
+                demands=DEMANDS,
+                max_channels=N_CHANNELS,
+                max_paths=config["max_paths"],
+                min_split_fraction=config["min_split_fraction"],
+            )
+            networks.append(network)
+        except Exception:
+            networks.append(None)
+    return networks
 
-# link_info[(network_name, fiber_type)][link_idx] = dict of link properties
-link_info = {}
 
-for network in NETWORKS:
-    for fiber in FIBERS:
-        attenuation = fiber["attenuation"]
-        effective_area = fiber["effective_area"]
-        dispersion = fiber["dispersion"]
-        gamma = get_gamma(N_2, WAVELENGTH, effective_area)
+def get_results(networks):
+    """
+    Run Phase 1 and Phase 2 for a list of networks.
+    Returns a list of per-network result dicts (None if the network is None).
+    Each result dict has keys: name, fibers.
+    Each fiber entry has keys: fiber, total_capacity, total_amps, route_nsrs.
+    """
+    # ------------------------------------------------------------------
+    # Phase 1: Compute NSR and transmission power (per channel) of each link
+    # ------------------------------------------------------------------
+    link_results = {}
 
-        info_list = []
-        for link_idx, (distance, channels) in enumerate(network["links"]):
-            # Iteratively find true gain and optimum launch power
-            gain_prev = UNSATURATED_GAIN
-            while True:
-                span_length = get_span_length(attenuation, gain_prev)
-                span_eff_length = get_effective_length(span_length, attenuation)
-                span_Cnli = get_C_nli(
-                    gamma, attenuation, dispersion, span_eff_length, CHANNEL_BANDWIDTH
+    for network in networks:
+        if network is None:
+            continue
+
+        for fiber in FIBERS:
+            link_results[(network["name"], fiber["type"])] = []
+
+            for distance, channels in network["links"]:
+                attenuation = fiber["attenuation"]
+                dispersion = fiber["dispersion"]
+                effective_area = fiber["effective_area"]
+
+                max_span_length = UNSATURATED_GAIN / attenuation  # km
+                min_spans = np.ceil(distance / max_span_length)
+                span_length = distance / min_spans
+
+                gamma = get_gamma(N_2, WAVELENGTH, effective_area)
+                L_eff = get_effective_length(span_length, attenuation)
+                C_nli = get_C_nli(
+                    gamma, attenuation, dispersion, L_eff, CHANNEL_BANDWIDTH
                 )
-                amplifier_noise = get_amplifier_noise(N_SP, HV, gain_prev)
-                opt_ptx, opt_psd = get_optimal_launch_power(
-                    amplifier_noise, span_Cnli, CHANNEL_BANDWIDTH
-                )
-                opt_ptx_linear = 10 ** (opt_ptx / 10)
-                total_ptx_linear = channels * opt_ptx_linear
-                gain = get_true_gain(UNSATURATED_GAIN, total_ptx_linear, P_SAT_LINEAR)
-                if abs(gain - gain_prev) < 0.01:
-                    break
-                gain_prev = gain
 
-            spans, excess = get_num_spans(distance, span_length)
-
-            # NSR from integer spans (no extra amplifier)
-            span_nsr = integer_span_nsr(
-                UNSATURATED_GAIN, opt_ptx, spans, N_SP, SYMBOL_RATE, HV
-            )
-
-            # NSR from excess fiber (no extra amplifier)
-            excess_eff_length = get_effective_length(excess, attenuation)
-            excess_Cnli = get_C_nli(
-                gamma, attenuation, dispersion, excess_eff_length, CHANNEL_BANDWIDTH
-            )
-            excess_nsr = get_excess_nsr(opt_psd, excess_Cnli)
-
-            # Total link NSR in linear (no inter-link or final amplifiers)
-            link_nsr_linear = 10 ** (span_nsr / 10) + 10 ** (excess_nsr / 10)
-
-            # Received power at end of link with no extra amplifier
-            rx_power = opt_ptx - attenuation * excess
-
-            info_list.append(
-                {
-                    "distance": distance,
-                    "channels": channels,
-                    "opt_ptx": opt_ptx,  # dBm
-                    "opt_ptx_linear": opt_ptx_linear,  # mW
-                    "opt_psd": opt_psd,
-                    "total_ptx_linear": total_ptx_linear,  # mW
-                    "rx_power": rx_power,  # dBm (no final amp)
-                    "link_nsr_linear": link_nsr_linear,
-                    "spans": int(spans),
-                    "gain": gain,  # true in-link amplifier gain dB
-                }
-            )
-
-        link_info[(network["name"], fiber["type"])] = info_list
-
-# ===========================================================================
-# Phase 2: For each network, find the best fiber type
-#   For each fiber: iterate routes, compute inter-link amplifier NSRs,
-#   find the best valid transceiver per route, sum route capacities.
-# ===========================================================================
-
-final_results = {}
-
-for network in NETWORKS:
-    best_fiber_capacity = 0
-    best_fiber_result = None
-
-    all_fiber_results = []
-    for fiber in FIBERS:
-        info = link_info[(network["name"], fiber["type"])]
-        fiber_capacity = 0
-        route_details = []  # (route_idx, transceiver_type, capacity, total_nsr_dB)
-        fiber_valid = True
-
-        for route_idx, (link_indices, route_channels) in enumerate(network["routes"]):
-            best_route_capacity = 0
-            best_route_detail = None
-
-            for transceiver in TRANSCEIVERS:
-                max_nsr = transceiver["max_nsr"]
-                min_power = transceiver["min_power"]
-                transceiver_nsr = transceiver["transceiver_nsr"]
-                data_rate = transceiver["data_rate"]
-
-                # Accumulate NSR in linear domain
-                total_nsr_linear = 10 ** (transceiver_nsr / 10)
-                valid = True
-                amplifiers_on_route = 0
-
-                for pos, li in enumerate(link_indices):
-                    link = info[li]
-
-                    # Add link NSR (spans + excess, no inter-link amp)
-                    total_nsr_linear += link["link_nsr_linear"]
-                    amplifiers_on_route += link["spans"]
-
-                    # Inter-link amplifier: boost rx power of this link
-                    # to the opt_ptx of the next link (not needed for last link)
-                    if pos < len(link_indices) - 1:
-                        next_link = info[link_indices[pos + 1]]
-                        # Gain needed: next link's opt_ptx - this link's rx_power
-                        needed_gain = next_link["opt_ptx"] - link["rx_power"]  # dB
-                        if needed_gain > 0:
-                            # Compute amplifier NSR
-                            rx_linear = 10 ** (link["rx_power"] / 10)  # mW
-                            amp_noise_psd = get_amplifier_noise(N_SP, HV, needed_gain)
-                            amp_nsr = get_amp_nsr(
-                                amp_noise_psd,
-                                CHANNEL_BANDWIDTH,
-                                rx_linear,
-                                needed_gain,
-                            )
-                            total_nsr_linear += amp_nsr
-                            amplifiers_on_route += 1
-
-                # Check final link received power
-                final_link = info[link_indices[-1]]
-                rx_power_final = final_link["rx_power"]
-
-                if rx_power_final < min_power:
-                    # Add a final amplifier with minimum gain to reach min_power
-                    needed_gain = min_power - rx_power_final  # dB
-                    rx_linear = 10 ** (rx_power_final / 10)  # mW
-                    amp_noise_psd = get_amplifier_noise(N_SP, HV, needed_gain)
-                    amp_nsr = get_amp_nsr(
-                        amp_noise_psd, CHANNEL_BANDWIDTH, rx_linear, needed_gain
+                # Method 1: Sweep per-channel launch power, pick lowest total NSR
+                # Attenuator after each amp ensures every span sees the same launch power,
+                # so only the first amp gain (from saturation) needs to be computed.
+                ptx_sweep_db = np.linspace(-10, 10, 500)  # dBm per channel
+                best_nsr_1 = np.inf
+                ptx_opt_db = ptx_sweep_db[0]
+                for ptx_db in ptx_sweep_db:
+                    ptx_linear = 10 ** (ptx_db / 10)  # mW per channel
+                    psd = ptx_linear / CHANNEL_BANDWIDTH  # pJ (PSD per channel)
+                    ptx_total = ptx_linear * channels  # mW total across all channels
+                    gain = get_true_gain(
+                        UNSATURATED_GAIN, ptx_total, P_SAT_LINEAR
+                    )  # dB
+                    nsr_amps = link_nsr_amps(
+                        gain, psd, min_spans, N_SP, SYMBOL_RATE, HV
                     )
-                    total_nsr_linear += amp_nsr
-                    amplifiers_on_route += 1
+                    nsr_nli = link_nsr_nli(C_nli, psd, min_spans)
+                    nsr_total = nsr_amps + nsr_nli
+                    if nsr_total < best_nsr_1:
+                        best_nsr_1 = nsr_total
+                        ptx_opt_db = ptx_db
+                nsr_1 = best_nsr_1
 
-                total_nsr_dB = 10 * np.log10(total_nsr_linear)
+                # Method 2: Reduce gain to avoid attenuators
+                gain_req = span_length * attenuation
+                psd_tx, ptx_linear, ptx_db = get_ptx_from_gain(
+                    gain_req,
+                    UNSATURATED_GAIN,
+                    P_SAT_LINEAR,
+                    CHANNEL_BANDWIDTH,
+                    channels,
+                )
+                nsr_amp_2 = link_nsr_amps(
+                    gain_req, psd_tx, min_spans, N_SP, SYMBOL_RATE, HV
+                )
+                nsr_nli_2 = link_nsr_nli(C_nli, psd_tx, min_spans)
+                nsr_2 = nsr_amp_2 + nsr_nli_2
 
-                if total_nsr_dB > max_nsr:
-                    valid = False
+                if nsr_1 < nsr_2:
+                    nsr, ptx_final_db = nsr_1, ptx_opt_db
+                else:
+                    nsr, ptx_final_db = nsr_2, ptx_db
 
-                if valid:
-                    route_capacity = route_channels * data_rate
-                    if route_capacity > best_route_capacity:
-                        best_route_capacity = route_capacity
-                        best_route_detail = (
-                            route_idx,
-                            transceiver["type"],
-                            route_capacity,
-                            total_nsr_dB,
-                            amplifiers_on_route,
+                link_results[(network["name"], fiber["type"])].append(
+                    (nsr, ptx_final_db, min_spans)
+                )
+
+    # ------------------------------------------------------------------
+    # Phase 2: Compute NSR of each route and assign transceivers
+    # ------------------------------------------------------------------
+    all_results = []
+
+    for network in networks:
+        if network is None:
+            all_results.append(None)
+            continue
+
+        fiber_results = []
+
+        for fiber in FIBERS:
+            results = link_results[(network["name"], fiber["type"])]
+            total_capacity = 0
+            route_nsrs = []
+
+            # Per-link amplifier counts (in-link span amps) + inter-link amp flags
+            link_amp_counts = [
+                int(results[li][2]) for li in range(len(network["links"]))
+            ]
+            link_amp_flags = [False] * len(network["links"])
+            transceiver_amps = 0
+
+            for route_idx, (link_indices, route_channels) in enumerate(
+                network["routes"]
+            ):
+                nsr_linear = sum(results[li][0] for li in link_indices)
+
+                for pos in range(len(link_indices) - 1):
+                    ptx_cur = results[link_indices[pos]][1]
+                    ptx_next = results[link_indices[pos + 1]][1]
+                    if ptx_next > ptx_cur:
+                        next_li = link_indices[pos + 1]
+                        next_link_channels = network["links"][next_li][1]
+                        ptx_next_total = 10 ** (ptx_next / 10) * next_link_channels
+                        amp_gain = get_true_gain(
+                            UNSATURATED_GAIN, ptx_next_total, P_SAT_LINEAR
                         )
+                        amp_noise_psd = get_amplifier_noise(N_SP, HV, amp_gain)
+                        psd_rx = 10 ** (ptx_cur / 10) / CHANNEL_BANDWIDTH
+                        nsr_linear += get_amp_nsr(amp_noise_psd, psd_rx, amp_gain)
+                        if not link_amp_flags[next_li]:
+                            link_amp_counts[next_li] += 1
+                            link_amp_flags[next_li] = True
 
-            if best_route_detail is None:
-                fiber_valid = False
-                break
+                ptx_last = results[link_indices[-1]][1]
+                best_data_rate = 0
+                best_route_nsr_db = float("nan")
+                best_needs_final_amp = False
 
-            fiber_capacity += best_route_capacity
-            route_details.append(best_route_detail)
+                for transceiver in TRANSCEIVERS:
+                    route_nsr = nsr_linear
 
-        if fiber_valid:
-            if fiber_capacity > best_fiber_capacity:
-                best_fiber_capacity = fiber_capacity
-            all_fiber_results.append(
+                    needs_final_amp = ptx_last < transceiver["min_power"]
+                    if needs_final_amp:
+                        p_out_total = (
+                            10 ** (transceiver["min_power"] / 10) * route_channels
+                        )
+                        amp_gain = get_true_gain(
+                            UNSATURATED_GAIN, p_out_total, P_SAT_LINEAR
+                        )
+                        amp_noise_psd = get_amplifier_noise(N_SP, HV, amp_gain)
+                        psd_rx = 10 ** (ptx_last / 10) / CHANNEL_BANDWIDTH
+                        route_nsr += get_amp_nsr(amp_noise_psd, psd_rx, amp_gain)
+
+                    route_nsr += 10 ** (transceiver["transceiver_nsr"] / 10)
+                    route_nsr_db = 10 * np.log10(route_nsr)
+
+                    if route_nsr_db <= transceiver["max_nsr"]:
+                        if transceiver["data_rate"] > best_data_rate:
+                            best_data_rate = transceiver["data_rate"]
+                            best_route_nsr_db = route_nsr_db
+                            best_needs_final_amp = needs_final_amp
+
+                if best_data_rate > 0 and best_needs_final_amp:
+                    transceiver_amps += 1
+
+                total_capacity += best_data_rate * route_channels
+                route_nsrs.append(best_route_nsr_db)
+
+            total_amps = sum(link_amp_counts) + transceiver_amps
+            fiber_results.append(
                 {
                     "fiber": fiber["type"],
-                    "capacity": fiber_capacity,
-                    "routes": route_details,
+                    "total_capacity": total_capacity,
+                    "total_amps": total_amps,
+                    "route_nsrs": route_nsrs,
                 }
             )
 
-    final_results[network["name"]] = {
-        "best_capacity": best_fiber_capacity,
-        "fibers": all_fiber_results,
-    }
+        all_results.append({"name": network["name"], "fibers": fiber_results})
 
-# ===========================================================================
-# Print results
-# ===========================================================================
+    return all_results
 
-for network_name, result in final_results.items():
-    if not result["fibers"]:
-        print(f"\nNo valid configuration found for {network_name}")
-        continue
-    print(f"\nResults for {network_name}:")
-    for fiber_result in result["fibers"]:
-        best_marker = (
-            " <-- best" if fiber_result["capacity"] == result["best_capacity"] else ""
-        )
-        print(
-            f"  Fiber type: {fiber_result['fiber']}  |  Total capacity: {fiber_result['capacity']:.1f} Tb/s{best_marker}"
-        )
-        for route_idx, tx_type, cap, nsr, amps in fiber_result["routes"]:
+
+def print_results(results, label=""):
+    """Print results in the standard format."""
+    header = f"Results{' — ' + label if label else ''}"
+    print(f"\n{'='*60}")
+    print(f"  {header}")
+    print(f"{'='*60}")
+    for net_result in results:
+        if net_result is None:
+            print("  (network infeasible — disconnected graph)")
+            continue
+        print(f"\n  Network: {net_result['name']}")
+        for fr in net_result["fibers"]:
             print(
-                f"      Route {route_idx}: Transceiver {tx_type}, "
-                f"{cap:.1f} Tb/s, NSR={nsr:.2f} dB, {amps} amplifiers"
+                f"    Fiber: {fr['fiber']}  |  "
+                f"Total capacity: {fr['total_capacity']:.2f} Tb/s  |  "
+                f"Amplifiers: {fr['total_amps']}"
             )
+            for i, nsr in enumerate(fr["route_nsrs"]):
+                nsr_str = f"{nsr:.2f} dB" if not np.isnan(nsr) else "invalid"
+                print(f"      Route {i}: NSR = {nsr_str}")
+
+
+def main():
+    # ------------------------------------------------------------------
+    # Baseline results
+    # ------------------------------------------------------------------
+    networks = build_networks(NETWORK_CONFIGS)
+    baseline = get_results(networks)
+    print_results(baseline, label="Baseline")
+
+    # ------------------------------------------------------------------
+    # Resilience: repeat with each undirected edge removed in turn
+    # For each network, track the edge deletion that gives the worst
+    # (lowest) total capacity across all fiber types.
+    # ------------------------------------------------------------------
+    print(f"\n\n{'#'*60}")
+    print("  Resilience Analysis — worst case per edge deletion")
+    print(f"{'#'*60}")
+
+    for ci, config in enumerate(NETWORK_CONFIGS):
+        worst_capacity = float("inf")
+        worst_label = ""
+        worst_result = None
+
+        for ei, edge in enumerate(config["edges"]):
+            edge_label = f"{edge[0]}–{edge[1]}"
+            reduced_networks = build_networks(NETWORK_CONFIGS, excluded_edge=(ci, ei))
+            result = get_results(reduced_networks)
+
+            # Best total capacity for this network with this edge removed
+            net_result = result[ci]
+            if net_result is None:
+                cap = 0.0
+            else:
+                cap = max(fr["total_capacity"] for fr in net_result["fibers"])
+
+            if cap < worst_capacity:
+                worst_capacity = cap
+                worst_label = f"{config['name']} without {edge_label}"
+                worst_result = result
+
+        if worst_result is not None:
+            print_results(
+                worst_result,
+                label=f"Worst case for {config['name']} (edge removed: {worst_label})",
+            )
+
+
+if __name__ == "__main__":
+    main()

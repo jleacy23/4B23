@@ -1,5 +1,5 @@
 \documentclass[12pt,a4paper]{article}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{float}
 \usepackage{subcaption}
@@ -69,48 +69,290 @@
 \subsection{Routing}
 The first step was to determine the proportion of capacity that should be allocated to each route joining two nodes in the network. The number of channels available to each link is approximately 
 \begin{equation}
-N_i = N_{busiest} \times \frac{C_i}{C_{busiest}}
+n_i = n_{busiest} \times \frac{C_i}{C_{busiest}}
 \label{eq:num_channels}
 \end{equation}
-where \(N\) is the number of channels and \(C\) is the capacity of a link. Hence an optimal routing maximised the total channels (and thus total capacity) by minimising the usage of the busiest link. This was framed as the multi-commodity flow problem and solved with linear programming given the demands between nodes and the maximum capacities of each link. The result was the relative usage of every route through the network.
+where \(n\) is the number of channels and \(C\) is the capacity of a link. Hence an optimal routing maximised the total channels (and thus total capacity) by minimising the usage of the busiest link. This was framed as the multi-commodity flow problem and solved with linear programming given the demands between nodes and the maximum capacities of each link. The result was the relative usage of every route through the network.
 \subsection{Channel Assignment}
 Equation \ref{eq:num_channels} indicates that the maximum number of channels should be assigned to the busiest link. Here the EDFA limits this to 25. Channels were then assigned to each route passing through the busiest link in proportion to their usages. One of these routes was then used as a reference to assign channels to those not passing through the busiest link as
 \begin{equation}
-N_i = N_{ref} \times \frac{C_i}{C_{ref}}.
+    n_i = n_{ref} \times \frac{C_i}{C_{ref}}.
 \end{equation}
 A final check was then performed to ensure every link had at most 25 channels.
 \subsection{Calculating NSR of a Link}
-The NSR in decibels over an integer number of spans is given by
+The NSR due to amplifier noise over all spans is given by
 \begin{equation}
-    NSR_{dB} = NF + 10 \log_{10}(N_s) + \alpha L_s + 10 \log_{10}(R_sh\nu \times 10^3) - P_{TX,dBm} + 10 \log_{10}(1.5)
-    \label{eq:nsr_spans}
+    NSR_{ASE} = \frac{N_s R_s}{P_{TX}}10^{G/10}h\nu(10^{G/10}-1)
+    \label{eq:nsr_amp}
 \end{equation}
-where \(NF\) is the noise figure of the EDFA, \(N_s\) is the number of spans, \(\alpha\) is the fiber attenuation in dB/km, \(L_s\) is the span length in km, \(R_s\) is the symbol rate, and \(P_{TX, dBm}\) is the transmitted power in dBm. The final term is due to non-linear noise being half that of amplifier noise at the optimum launch power. This assumed a brick-wall shaped pulse and that the amplifier gain in dB is \(\alpha L_s\). In practice the link length was not always an integer number of spans, so the additional NSR of the remaining length had to be included. The NSR due to non-linear effects in the excess fiber is given by
+where \(NF\) is the noise figure of the EDFA, \(N_s\) is the number of spans, \(G\) is the amplifier gain in dB, \(R_s\) is the symbol rate, and \(P_{TX}\) is the transmitted power per channel in mW. This assumed a brick-wall shaped pulse. The NSR due to non-linear effects is
 \begin{equation}
-    NSR_{add} = \frac{N_{NLI}}{G_{TX}} = C_{NLI} G_{TX}^2
+    NSR_{NLI} = N_s\frac{N_{NLI}}{G_{TX}} = N_s C_{NLI}G_{TX}^2 = \frac{N_s C_{NLI} P_{TX}^2}{R_s^2}
+    \label{eq:nsr_nli}
 \end{equation}
-where \(C_{NLI}\) is the non-linear coefficient of the excess fiber and \(G_{TX}\) is the PSD of the signal at the start of the excess fiber. An additional amplifier may be needed at the end of the link, in which case the NSR is further increased by
+where \(C_{NLI}\) is the non-linear coefficient of the length of fiber in a span. These can then be summed to find the total NSR of a link.
+The maximum span length \(L_{s,\max}\) can be found from the unsaturated gain \(G_0\) and fiber attenuation \(\alpha\) as \(L_{s,\max} = \frac{G_0}{\alpha}\). To ensure amplifiers can be placed at the same point along each direction of the link, an integer number of spans should be enforced. Thus for a link length \(L_T\), \(N_s = \lceil \frac{L_T}{L_{s,\max}} \rceil \) and the span length \(L_s = \frac{L_T}{N_s}\). This will result in each span having a net gain greater than 0 dB which, meaning the transmitted power changes between spans. This is difficult to optimize for so the variable attenuator can be used at the input to each amplifier or the launch power adjusted to saturate the amplifier so there is no net gain per span. The first approach requires a sweep over a range of \(P_{TX}\). The true gain of each amplifier (accounting for saturation) was calculated as
 \begin{equation}
-    NSR_{amp} = \frac{N_{ASE}}{(10^\frac{-\alpha L_x}{10}g) \times G_{TX}}
+    G = G_0 - 10\log_{10}(1 + \frac{n_i P_{TX}}{P_{SAT}})
 \end{equation}
-where \(N_{ASE}\) is the PSD of the amplifier noise, \(L_x\) is the excess length in km and \(g\) is the linear amplifier gain.
-
-\subsection{Determining Amplifier Gain and Span Length}
-The amplifiers used had an unsaturated gain \(G_0\) of 25 dB and a total saturation output power across all channels \(P_{sat, dBm}^{out}\) of 23 dBm. The true gain of the amplifier in dB is
-\begin{equation}
-    G = G_0 - 10 \log_{10} (1 + \frac{P_{out}}{P_{sat}})
-    \label{eq:gain}
-\end{equation}
-where \(P_{out}\) is the total output power across all channels in mW, and \(P_{sat} = \frac{1}{\ln 2} P_{sat}^{out}\) in mW. Equation \ref{eq:nsr_spans} is valid for the optimum launch power over one channel \(P_{TX, opt} = R_s\sqrt[3]{\frac{N_{ASE}}{C_{NLI}}}\). This was computed iteratively by first assuming \(G = G_0\) to find an initial value of the optimum launch power, then using this to find the total power over all channels and updating \(G\) with Equation \ref{eq:gain}. This was done until the gain and optimum launch power converged. The resulting span length \(L_s = \frac{G}{\alpha}\) was then computed for each link.
+where \(P_{SAT}\) is the saturation power in mW. No net gain across spans meant that this gain was the same for all amplifiers in the link. Equation \ref{eq:nsr_amp} was then used to find the amplifier NSR and combined with the non-linear noise from Equation \ref{eq:nsr_nli}. Note that \(C_{NLI}\) is fixed by the span length and fiber type. The \(P_{TX}\) with the best NSR was then chosen. The second approach fixes the gain to be \(\alpha L_s\) then finds the required \(P_{TX}\) to achieve it and its corresponding NSR. The approach with the best NSR was then chosen.
 \subsection{Calculating NSR of a Route}
-The total NSR along a route was the sum of the NSRs of each link it passed through and the NSRs of any additional amplifiers. To ensure the optimum power is used at the start of every link, an amplifier was added between links \(i\) and \(i+1\) with linear gain \(g = \frac{P_{RX, i}}{P_{TX, i+1}}\) where \(P_{RX,i}\) is the received power at the end of the link \(i\) including the loss of the additional fiber that is a fraction of the span length and \(P_{TX, i+1}\) is the optimum launch power of the next link. [FIX THIS!!!] 
+The total NSR present along a route is calculated by summing the NSRs of each link \(NSR_i\) it passed through. As \(P_{TX}\) was calculated for each link individually, the \(P_{TX}\) of one link may be lower than that of the following link along the route. In this case, an additional amplifier is needed at the start of the next link to normalize to its optimal \(P_{TX}\). This incurs extra NSR from the amplifier which must be added to the route total. When the route terminates at a transceiver, \(P_{TX}\) of the last link must be checked against the minimum operating power for the transceiver. If it is too low then an extra amplifier must be added, further increasing the NSR. Finally the transceiver NSR is included.
 \subsection{Validating a Route}
-A route in the network was valid for a given transceiver mode if it could deliver an output power greater than the minimum of the transceiver and an NSR lower than the maximum of the transceiver. Fiber type was kept the same throughout the network but the transceiver mode could vary between routes as they operated on individual channels. For each fiber type, the NSR and output power of every route was calculated then checked against the transceiver constraints. The transceiver mode that had the highest data rate and was valid for the route \(D_{\max}\) was then used to find the capacity of a route \(C_r = N_rD_{\max}\), where \(N_r\) is the number of channels assigned to the route.
+A route in the network was declared valid for a given transceiver mode if it could deliver an output power greater than the minimum of the transceiver and an NSR lower than the maximum of the transceiver. Fiber type was kept the same throughout the network but the transceiver mode could vary between routes as they operated on individual channels. For each fiber type, the NSR and output power of every route was calculated then checked against the transceiver constraints. The transceiver mode that had the highest data rate and was valid for the route \(D_{\max}\) was then used to find the capacity of a route \(C_r = n_r D_{\max}\), where \(n_r\) is the number of channels assigned to the route.
 \subsection{Optimization and Measuring Resilience}
-The total capacity of a network was found by summing the capacities of every route. This was repeated over all fiber types to find the highest capacity and thus the optimal design for each network. Resilience was measured by finding the lowest capacity when any pair of links (both directions) was broken and the corresponding drop in capacity to every city.
+The total capacity of a network was found by summing the capacities of every route. This was repeated over all fiber types to find the highest capacity and thus the optimal design for each network. If the highest capacity was achieved by multiple fiber types then that which minimized the number of amplifiers was chosen.
 
 
 \section{Results}
 
+
+\begin{table}[H]
+\centering
+\caption{Baseline results, best fiber type marked with (*)}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network~1.}
+\label{tab:base_n1}
+\small
+\begin{tabular}{lrrr}
+\toprule
+ & NZ-DSF & PCSF* & NDSF \\
+\midrule
+Capacity (Tb/s) & 216.40 & 224.00 & 224.00 \\
+Amplifiers      &     35 &     21 &     33 \\
+\midrule
+Route & \multicolumn{3}{c}{NSR (dB)} \\
+\cmidrule(lr){2-4}
+ 0 & $-$16.17 & $-$18.94 & $-$17.61 \\
+ 1 & $-$14.15 & $-$18.08 & $-$16.06 \\
+ 2 & $-$10.89 & $-$15.26 & $-$13.11 \\
+ 3 & $-$13.93 & $-$17.21 & $-$16.54 \\
+ 4 & $-$12.44 & $-$16.42 & $-$15.05 \\
+ 5 & $-$16.17 & $-$18.94 & $-$17.61 \\
+ 6 & $-$14.11 & $-$17.37 & $-$16.70 \\
+ 7 & $-$16.15 & $-$18.93 & $-$17.59 \\
+ 8 & $-$13.08 & $-$17.01 & $-$15.05 \\
+ 9 & $-$17.60 & $-$18.92 & $-$18.58 \\
+10 & $-$14.12 & $-$18.05 & $-$16.02 \\
+11 & $-$16.09 & $-$18.88 & $-$17.53 \\
+12 & $-$14.56 & $-$17.67 & $-$16.23 \\
+13 & $-$17.35 & $-$18.62 & $-$18.31 \\
+14 & $-$12.65 & $-$16.66 & $-$15.27 \\
+15 & $-$13.97 & $-$17.25 & $-$15.86 \\
+16 & $-$14.43 & $-$17.51 & $-$16.06 \\
+17 & $-$14.83 & $-$17.93 & $-$16.54 \\
+18 & $-$15.03 & $-$18.10 & $-$16.76 \\
+19 & $-$17.64 & $-$18.96 & $-$18.62 \\
+20 & $-$17.35 & $-$18.62 & $-$18.31 \\
+21 & $-$14.72 & $-$17.83 & $-$16.42 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network~2.}
+\label{tab:base_n2}
+\small
+\begin{tabular}{lrrr}
+\toprule
+ & NZ-DSF & PCSF* & NDSF \\
+\midrule
+Capacity (Tb/s) & 300.40 & 316.80 & 316.80 \\
+Amplifiers      &     33 &     24 &     30 \\
+\midrule
+Route & \multicolumn{3}{c}{NSR (dB)} \\
+\cmidrule(lr){2-4}
+ 0 & $-$16.17 & $-$18.94 & $-$17.61 \\
+ 1 & $-$12.23 & $-$16.78 & $-$14.45 \\
+ 2 & $-$14.12 & $-$17.37 & $-$16.03 \\
+ 3 & $-$16.10 & $-$18.09 & $-$17.54 \\
+ 4 & $-$13.35 & $-$16.76 & $-$15.39 \\
+ 5 & $-$12.52 & $-$16.50 & $-$15.19 \\
+ 6 & $-$16.15 & $-$18.93 & $-$17.59 \\
+ 7 & $-$14.13 & $-$17.38 & $-$16.04 \\
+ 8 & $-$16.19 & $-$18.95 & $-$17.63 \\
+ 9 & $-$13.40 & $-$17.39 & $-$15.44 \\
+10 & $-$11.72 & $-$16.23 & $-$14.00 \\
+11 & $-$16.10 & $-$18.09 & $-$17.54 \\
+12 & $-$14.15 & $-$18.09 & $-$16.06 \\
+13 & $-$16.17 & $-$18.94 & $-$17.61 \\
+14 & $-$14.99 & $-$18.09 & $-$16.72 \\
+15 & $-$12.73 & $-$16.76 & $-$14.87 \\
+16 & $-$12.75 & $-$16.77 & $-$15.40 \\
+17 & $-$13.33 & $-$16.75 & $-$15.37 \\
+18 & $-$13.37 & $-$17.36 & $-$15.41 \\
+19 & $-$14.97 & $-$18.07 & $-$16.69 \\
+20 & $-$15.00 & $-$18.08 & $-$16.72 \\
+21 & $-$15.03 & $-$18.10 & $-$17.56 \\
+22 & $-$11.70 & $-$16.21 & $-$13.98 \\
+23 & $-$12.72 & $-$16.74 & $-$14.86 \\
+24 & $-$15.00 & $-$18.08 & $-$16.72 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+% --- Resilience Network 1: London-Birmingham removed ---
+\begin{table}[H]
+\centering
+\caption{Network~1 resilience (London--Birmingham removed).}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Routes~0--27.}
+\label{tab:resil_n1_a}
+\small
+\begin{tabular}{lrrr}
+\toprule
+ & NZ-DSF & PCSF* & NDSF \\
+\midrule
+Capacity (Tb/s) &  77.20 &  97.60 &  97.60 \\
+Amplifiers      &     32 &     20 &     31 \\
+\midrule
+Route & \multicolumn{3}{c}{NSR (dB)} \\
+\cmidrule(lr){2-4}
+ 0 & $-$12.04 & $-$16.02 & $-$14.69 \\
+ 1 & $-$11.09 & $-$15.52 & $-$13.76 \\
+ 2 & $-$10.39 & $-$15.18 & $-$13.08 \\
+ 3 & $-$13.29 & $-$17.29 & $-$15.31 \\
+ 4 & $-$13.19 & $-$16.51 & $-$15.20 \\
+ 5 & $-$11.57 & $-$16.07 & $-$13.82 \\
+ 6 & $-$11.18 & $-$15.66 & $-$13.87 \\
+ 7 & $-$12.03 & $-$16.03 & $-$14.22 \\
+ 8 & $-$14.99 & $-$18.09 & $-$16.72 \\
+ 9 & $-$12.64 & $-$16.67 & $-$14.77 \\
+10 & $-$14.00 & $-$17.21 & $-$15.88 \\
+11 & $-$12.59 & $-$16.56 & $-$14.69 \\
+12 & $-$13.89 & $-$17.12 & $-$16.45 \\
+13 & $-$12.53 & $-$16.46 & $-$15.13 \\
+14 & $-$10.35 & $-$15.14 & $-$13.05 \\
+15 & $-$13.90 & $-$17.10 & $-$16.45 \\
+16 & $-$12.51 & $-$16.47 & $-$15.12 \\
+17 & $-$11.13 & $-$15.60 & $-$13.82 \\
+18 & $-$12.57 & $-$16.57 & $-$15.20 \\
+19 & $-$13.99 & $-$17.22 & $-$16.55 \\
+20 & $-$12.58 & $-$16.51 & $-$15.17 \\
+21 & $-$15.98 & $-$18.81 & $-$17.41 \\
+22 & $-$15.81 & $-$17.74 & $-$17.23 \\
+23 & $-$12.04 & $-$16.04 & $-$14.23 \\
+24 & $-$13.89 & $-$17.13 & $-$15.77 \\
+25 & $-$12.50 & $-$16.44 & $-$14.59 \\
+26 & $-$17.42 & $-$18.75 & $-$18.41 \\
+27 & $-$14.75 & $-$17.77 & $-$16.43 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Routes~28--56 (continued).}
+\label{tab:resil_n1_b}
+\small
+\begin{tabular}{lrrr}
+\toprule
+% Route & NZ-DSF & PCSF* & NDSF \\
+% \cmidrule(lr){2-4}
+28 & $-$13.98 & $-$17.17 & $-$16.52 \\
+29 & $-$12.60 & $-$16.56 & $-$15.21 \\
+30 & $-$16.00 & $-$18.83 & $-$17.44 \\
+31 & $-$15.78 & $-$17.71 & $-$17.19 \\
+32 & $-$13.88 & $-$17.08 & $-$15.75 \\
+33 & $-$12.52 & $-$16.49 & $-$14.62 \\
+34 & $-$17.40 & $-$18.68 & $-$18.36 \\
+35 & $-$14.78 & $-$17.84 & $-$16.49 \\
+36 & $-$12.64 & $-$16.65 & $-$15.27 \\
+37 & $-$12.10 & $-$16.08 & $-$14.74 \\
+38 & $-$11.15 & $-$15.60 & $-$13.82 \\
+39 & $-$13.88 & $-$17.12 & $-$15.76 \\
+40 & $-$13.30 & $-$17.30 & $-$15.33 \\
+41 & $-$12.52 & $-$16.46 & $-$14.61 \\
+42 & $-$13.18 & $-$16.48 & $-$15.17 \\
+43 & $-$14.99 & $-$18.09 & $-$16.72 \\
+44 & $-$13.89 & $-$17.10 & $-$15.76 \\
+45 & $-$12.50 & $-$16.47 & $-$14.60 \\
+46 & $-$14.85 & $-$17.95 & $-$16.57 \\
+47 & $-$13.99 & $-$17.20 & $-$15.87 \\
+48 & $-$12.60 & $-$16.59 & $-$14.72 \\
+49 & $-$14.98 & $-$18.06 & $-$17.52 \\
+50 & $-$17.40 & $-$18.73 & $-$18.39 \\
+51 & $-$14.78 & $-$17.81 & $-$16.47 \\
+52 & $-$11.58 & $-$16.08 & $-$13.83 \\
+53 & $-$17.42 & $-$18.70 & $-$18.39 \\
+54 & $-$14.75 & $-$17.81 & $-$16.45 \\
+55 & $-$12.65 & $-$16.67 & $-$14.77 \\
+56 & $-$14.85 & $-$17.95 & $-$16.57 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+% --- Resilience Network 2: London-Leeds removed ---
+\begin{table}[H]
+\centering
+\caption{Network~2 resilience (London--Leeds removed).}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Routes~0--15.}
+\label{tab:resil_n2_a}
+\small
+\begin{tabular}{lrrr}
+\toprule
+ & NZ-DSF & PCSF & NDSF \\
+\midrule
+Capacity (Tb/s) & 145.20 & 152.00 & 152.00 \\
+Amplifiers      &     29 &     17 &     28 \\
+\midrule
+Route & \multicolumn{3}{c}{NSR (dB)} \\
+\cmidrule(lr){2-4}
+ 0 & $-$13.32 & $-$16.73 & $-$15.36 \\
+ 1 & $-$11.97 & $-$16.52 & $-$14.14 \\
+ 2 & $-$13.21 & $-$17.22 & $-$15.23 \\
+ 3 & $-$12.05 & $-$16.10 & $-$14.24 \\
+ 4 & $-$14.97 & $-$18.07 & $-$16.69 \\
+ 5 & $-$11.55 & $-$15.59 & $-$13.79 \\
+ 6 & $-$10.60 & $-$15.42 & $-$12.91 \\
+ 7 & $-$11.47 & $-$15.95 & $-$13.70 \\
+ 8 & $-$10.66 & $-$15.09 & $-$12.98 \\
+ 9 & $-$12.57 & $-$16.57 & $-$14.68 \\
+10 & $-$15.88 & $-$18.76 & $-$17.32 \\
+11 & $-$13.83 & $-$17.09 & $-$15.70 \\
+12 & $-$15.93 & $-$17.91 & $-$17.37 \\
+13 & $-$13.80 & $-$17.78 & $-$15.66 \\
+14 & $-$13.12 & $-$16.50 & $-$15.13 \\
+15 & $-$11.88 & $-$16.41 & $-$14.03 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Routes~16--31 (continued).}
+\label{tab:resil_n2_b}
+\small
+\begin{tabular}{lrrr}
+\toprule
+% Route & NZ-DSF & PCSF & NDSF \\
+% \cmidrule(lr){2-4}
+16 & $-$15.88 & $-$18.76 & $-$17.32 \\
+17 & $-$13.92 & $-$17.22 & $-$15.80 \\
+18 & $-$15.88 & $-$18.74 & $-$17.31 \\
+19 & $-$13.83 & $-$17.10 & $-$15.71 \\
+20 & $-$13.10 & $-$17.08 & $-$15.09 \\
+21 & $-$11.90 & $-$15.90 & $-$14.06 \\
+22 & $-$11.30 & $-$15.71 & $-$13.47 \\
+23 & $-$10.47 & $-$14.82 & $-$12.74 \\
+24 & $-$16.08 & $-$18.07 & $-$17.52 \\
+25 & $-$13.80 & $-$17.78 & $-$15.66 \\
+26 & $-$15.88 & $-$18.74 & $-$17.31 \\
+27 & $-$13.92 & $-$17.23 & $-$15.81 \\
+28 & $-$14.80 & $-$17.90 & $-$16.51 \\
+29 & $-$12.34 & $-$16.30 & $-$14.39 \\
+30 & $-$14.53 & $-$17.63 & $-$16.20 \\
+31 & $-$14.75 & $-$17.85 & $-$16.45 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
 
 \end{document}

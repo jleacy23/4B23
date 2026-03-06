@@ -285,10 +285,10 @@ def assign_channels(result: RoutingResult, demands: dict, max_channels: int) -> 
     # 2. Find the most utilised link
     # ------------------------------------------------------------------
     busiest_link = max(result.link_utilisation, key=result.link_utilisation.get)
-    print(
-        f"  Most utilised link: {busiest_link[0]} → {busiest_link[1]} "
-        f"({result.link_utilisation[busiest_link]:.1%})"
-    )
+    # print(
+    #     f"  Most utilised link: {busiest_link[0]} → {busiest_link[1]} "
+    #     f"({result.link_utilisation[busiest_link]:.1%})"
+    # )
 
     # ------------------------------------------------------------------
     # 3. Identify routes that pass through the busiest link
@@ -363,13 +363,13 @@ def assign_channels(result: RoutingResult, demands: dict, max_channels: int) -> 
             key=lambda k: channel_assignments[k],
         )
         channel_assignments[candidate] -= 1
-        print(
-            f"  [rounding fix] -{1} channel from "
-            f"{candidate[0]} → {candidate[1]} "
-            f"via {" → ".join(str(n) for n in candidate[2])} "
-            f"(link {worst_link[0]} → {worst_link[1]} "
-            f"was {overloaded[worst_link]}/{max_channels})"
-        )
+        # print(
+        #     f"  [rounding fix] -{1} channel from "
+        #     f"{candidate[0]} → {candidate[1]} "
+        #     f"via {" → ".join(str(n) for n in candidate[2])} "
+        #     f"(link {worst_link[0]} → {worst_link[1]} "
+        #     f"was {overloaded[worst_link]}/{max_channels})"
+        # )
 
         # Recompute ALL link totals and ALL overloaded links
         link_totals = compute_link_totals(channel_assignments)
@@ -413,7 +413,7 @@ def check_link_channel_usage(channel_assignments: dict, max_channels: int) -> di
         for u, v in zip(path[:-1], path[1:]):
             link_channels[(u, v)] = link_channels.get((u, v), 0) + ch
 
-    print(f"\n--- Channel Usage per Link (max: {max_channels}) ---")
+    # print(f"\n--- Channel Usage per Link (max: {max_channels}) ---")
     for (u, v), total in sorted(link_channels.items(), key=lambda x: -x[1]):
         headroom = max_channels - total
         bar = "█" * int((total / max_channels) * 20)
@@ -423,10 +423,10 @@ def check_link_channel_usage(channel_assignments: dict, max_channels: int) -> di
             status = " ◀ busiest"
         else:
             status = ""
-        print(
-            f"  {u} → {v}:  {total:3d} / {max_channels} channels  "
-            f"({headroom:+d} spare)  {bar}{status}"
-        )
+        # print(
+        #     f"  {u} → {v}:  {total:3d} / {max_channels} channels  "
+        #     f"({headroom:+d} spare)  {bar}{status}"
+        # )
 
     return link_channels
 
@@ -493,11 +493,11 @@ def generate_network_params(
     if result.status not in ("optimal", "optimal_inaccurate"):
         raise RuntimeError(f"Optimization failed for {name}: {result.status}")
 
-    result.print_summary()
+    # result.print_summary()
 
     # Assign channels to routes
     channel_assignments = assign_channels(result, demands, max_channels=max_channels)
-    print_channel_summary(channel_assignments, max_channels=max_channels)
+    # print_channel_summary(channel_assignments, max_channels=max_channels)
 
     # Compute per-link channel counts
     link_channel_counts = {}
@@ -525,7 +525,7 @@ def generate_network_params(
         routes.append((link_indices, ch))
 
     total_channels = sum(channel_assignments.values())
-    print(f"\nTotal assigned channels for {name}: {total_channels}")
+    # print(f"\nTotal assigned channels for {name}: {total_channels}")
 
     return {
         "name": name,
