@@ -15,13 +15,17 @@
 
 \maketitle
 
+\section{Abstract}
+
+
 \section{Introduction}
+A core optical network consists of several cities (nodes) connected by optical fiber links. An effective network should provide high capacity and be resilient to outages. High capacity is achieved by careful routing of data between nodes that balances the usage on each link, and the choice of an appropriate fiber type with periodic EDFA placement to minimize the noise experienced by each route and ensure a high enough signal power to be detected by a transceiver at a high data rate. Resilience depends heavily on the network topology. More links allow for more routes between any pair of nodes which reduces the impact of an outage, especially if re-routing is possible once an outage is identified. Two network topologies are compared in terms of best-case capacity, fiber and amplifier usage, and resilience to outages. Figure \ref{fig:networks} shows both of these networks connecting 5 UK cities.
 
 \begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.45\textwidth}
 \centering
-\begin{tikzpicture}[scale=1.2]
+\begin{tikzpicture}[scale=1]
     % Define node positions (clockwise from bottom)
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=below:London] (London) at (0, -2) {};
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=left:Birmingham] (Birmingham) at (-1.5, -0.5) {};
@@ -30,20 +34,20 @@
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=right:Leeds] (Leeds) at (1.5, 0.5) {};
     
     % Draw edges
-    \draw[thick] (London) -- (Birmingham);
-    \draw[thick] (London) -- (Leeds);
-    \draw[thick] (Birmingham) -- (Leeds);
-    \draw[thick] (Birmingham) -- (Manchester);
-    \draw[thick] (Manchester) -- (Leeds);
-    \draw[thick] (Manchester) -- (Glasgow);
-    \draw[thick] (Glasgow) -- (Leeds);
+    \draw[thick] (London) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{162} (Birmingham);
+    \draw[thick] (London) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{272} (Leeds);
+    \draw[thick] (Birmingham) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{113} (Leeds);
+    \draw[thick] (Birmingham) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{148} (Manchester);
+    \draw[thick] (Manchester) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{59} (Leeds);
+    \draw[thick] (Manchester) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{295} (Glasgow);
+    \draw[thick] (Glasgow) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{288} (Leeds);
 \end{tikzpicture}
 \caption{Network 1}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.45\textwidth}
 \centering
-\begin{tikzpicture}[scale=1.2]
+\begin{tikzpicture}[scale=1]
     % Define node positions (clockwise from bottom)
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=below:London] (London) at (0, -2) {};
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=left:Birmingham] (Birmingham) at (-1.5, -0.5) {};
@@ -52,16 +56,16 @@
     \node[circle, draw, fill=blue!20, minimum size=0.8cm, label=right:Leeds] (Leeds) at (1.5, 0.5) {};
     
     % Draw edges
-    \draw[thick] (London) -- (Birmingham);
-    \draw[thick] (London) -- (Leeds);
-    \draw[thick] (London) -- (Manchester);
-    \draw[thick] (Birmingham) -- (Manchester);
-    \draw[thick] (Manchester) -- (Glasgow);
-    \draw[thick] (Glasgow) -- (Leeds);
+    \draw[thick] (London) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{162} (Birmingham);
+    \draw[thick] (London) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{272} (Leeds);
+    \draw[thick] (London) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{262} (Manchester);
+    \draw[thick] (Birmingham) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{148} (Manchester);
+    \draw[thick] (Manchester) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{295} (Glasgow);
+    \draw[thick] (Glasgow) -- node[midway, above, font=\tiny, inner sep=1pt, fill=white]{288} (Leeds);
 \end{tikzpicture}
 \caption{Network 2}
 \end{subfigure}
-\caption{Comparison of two network topologies with 5 UK cities.}
+\caption{Comparison of two network topologies with 5 UK cities. Link distances in km.}
 \label{fig:networks}
 \end{figure}
 
@@ -78,7 +82,7 @@ Equation \ref{eq:num_channels} indicates that the maximum number of channels sho
 \begin{equation}
     n_i = n_{ref} \times \frac{C_i}{C_{ref}}.
 \end{equation}
-A final check was then performed to ensure every link had at most 25 channels.
+If a link had more than 25 channels assigned, the route with the most channels passing through that link had one channel removed. This was repeated until all links had at most 25 channels.
 \subsection{Calculating NSR of a Link}
 The NSR due to amplifier noise over all spans is given by
 \begin{equation}
@@ -101,258 +105,375 @@ The total NSR present along a route is calculated by summing the NSRs of each li
 \subsection{Validating a Route}
 A route in the network was declared valid for a given transceiver mode if it could deliver an output power greater than the minimum of the transceiver and an NSR lower than the maximum of the transceiver. Fiber type was kept the same throughout the network but the transceiver mode could vary between routes as they operated on individual channels. For each fiber type, the NSR and output power of every route was calculated then checked against the transceiver constraints. The transceiver mode that had the highest data rate and was valid for the route \(D_{\max}\) was then used to find the capacity of a route \(C_r = n_r D_{\max}\), where \(n_r\) is the number of channels assigned to the route.
 \subsection{Optimization and Measuring Resilience}
-The total capacity of a network was found by summing the capacities of every route. This was repeated over all fiber types to find the highest capacity and thus the optimal design for each network. If the highest capacity was achieved by multiple fiber types then that which minimized the number of amplifiers was chosen.
+The total capacity of a network was found by summing the capacities of every route. This was repeated over all fiber types to find the highest capacity and thus the optimal design for each network. If the highest capacity was achieved by multiple fiber types then that which minimized the number of amplifiers was chosen. Resilience was compared with worst-case total capacity immediately after a single link outage and after re-routing. Re-routing meant finding new routes through the updated network with the outage link missing that rebalanced the flow of data to match the demands of each city. Amplifier positions remained fixed but channel assignments and transmission powers could be adjusted.
 
 
 \section{Results}
 
+\newcommand{\ra}{$\rightarrow$}
+\subsection{Routing and Channel Assignment}
+% Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
 
+% ------------------------------------------------------------------
+% Table 1: Route index to path + channels
+% ------------------------------------------------------------------
 \begin{table}[H]
 \centering
-\caption{Baseline results, best fiber type marked with (*)}
+\caption{Route index, path, and channel allocation for each network.
+  Key: A\,=\,London, B\,=\,Birmingham, C\,=\,Manchester, D\,=\,Leeds, E\,=\,Glasgow.}
+\label{tab:routes}
 \begin{subtable}[t]{0.48\textwidth}
 \centering
-\caption{Network~1.}
-\label{tab:base_n1}
-\small
-\begin{tabular}{lrrr}
+% \footnotesize
+\caption{Network 1}
+\begin{tabular}{clc}
 \toprule
- & NZ-DSF & PCSF* & NDSF \\
+Idx & Route & Channels \\
 \midrule
-Capacity (Tb/s) & 216.40 & 224.00 & 224.00 \\
-Amplifiers      &     35 &     21 &     33 \\
-\midrule
-Route & \multicolumn{3}{c}{NSR (dB)} \\
-\cmidrule(lr){2-4}
- 0 & $-$16.17 & $-$18.94 & $-$17.61 \\
- 1 & $-$14.15 & $-$18.08 & $-$16.06 \\
- 2 & $-$10.89 & $-$15.26 & $-$13.11 \\
- 3 & $-$13.93 & $-$17.21 & $-$16.54 \\
- 4 & $-$12.44 & $-$16.42 & $-$15.05 \\
- 5 & $-$16.17 & $-$18.94 & $-$17.61 \\
- 6 & $-$14.11 & $-$17.37 & $-$16.70 \\
- 7 & $-$16.15 & $-$18.93 & $-$17.59 \\
- 8 & $-$13.08 & $-$17.01 & $-$15.05 \\
- 9 & $-$17.60 & $-$18.92 & $-$18.58 \\
-10 & $-$14.12 & $-$18.05 & $-$16.02 \\
-11 & $-$16.09 & $-$18.88 & $-$17.53 \\
-12 & $-$14.56 & $-$17.67 & $-$16.23 \\
-13 & $-$17.35 & $-$18.62 & $-$18.31 \\
-14 & $-$12.65 & $-$16.66 & $-$15.27 \\
-15 & $-$13.97 & $-$17.25 & $-$15.86 \\
-16 & $-$14.43 & $-$17.51 & $-$16.06 \\
-17 & $-$14.83 & $-$17.93 & $-$16.54 \\
-18 & $-$15.03 & $-$18.10 & $-$16.76 \\
-19 & $-$17.64 & $-$18.96 & $-$18.62 \\
-20 & $-$17.35 & $-$18.62 & $-$18.31 \\
-21 & $-$14.72 & $-$17.83 & $-$16.42 \\
+0  & A\ra B                    & 9  \\
+1  & A\ra B\ra D\ra C          & 7  \\
+2  & A\ra B\ra C\ra E          & 4  \\
+3  & A\ra B\ra C\ra D          & 5  \\
+4  & A\ra D\ra B               & 9  \\
+5  & A\ra D\ra B\ra C          & 7  \\
+6  & A\ra D\ra C\ra E          & 4  \\
+7  & A\ra D                    & 5  \\
+8  & B\ra A                    & 9  \\
+9  & B\ra D\ra A               & 8  \\
+10 & B\ra D\ra C               & 3  \\
+11 & B\ra D\ra E\ra C          & 3  \\
+12 & B\ra C\ra E               & 4  \\
+13 & B\ra C\ra E\ra D          & 4  \\
+14 & C\ra B\ra A               & 6  \\
+15 & C\ra D\ra A               & 7  \\
+16 & C\ra B                    & 6  \\
+17 & C\ra E                    & 2  \\
+18 & C\ra B\ra D\ra E          & 2  \\
+19 & C\ra D                    & 2  \\
+20 & C\ra B\ra D               & 2  \\
+21 & E\ra D\ra B\ra A          & 4  \\
+22 & E\ra C\ra D\ra A          & 4  \\
+23 & E\ra C\ra D\ra B          & 4  \\
+24 & E\ra C                    & 2  \\
+25 & E\ra D\ra C               & 2  \\
+26 & E\ra D                    & 2  \\
+27 & E\ra C\ra D               & 2  \\
+28 & D\ra A                    & 5  \\
+29 & D\ra E\ra C\ra B\ra A     & 5  \\
+30 & D\ra C\ra B               & 4  \\
+31 & D\ra C                    & 2  \\
+32 & D\ra E\ra C               & 2  \\
+33 & D\ra E                    & 2  \\
+34 & D\ra C\ra E               & 2  \\
 \bottomrule
 \end{tabular}
 \end{subtable}
 \hfill
 \begin{subtable}[t]{0.48\textwidth}
 \centering
-\caption{Network~2.}
-\label{tab:base_n2}
-\small
-\begin{tabular}{lrrr}
+% \footnotesize
+\caption{Network 2}
+\begin{tabular}{clc}
 \toprule
- & NZ-DSF & PCSF* & NDSF \\
+Idx & Route & Channels \\
 \midrule
-Capacity (Tb/s) & 300.40 & 316.80 & 316.80 \\
-Amplifiers      &     33 &     24 &     30 \\
-\midrule
-Route & \multicolumn{3}{c}{NSR (dB)} \\
-\cmidrule(lr){2-4}
- 0 & $-$16.17 & $-$18.94 & $-$17.61 \\
- 1 & $-$12.23 & $-$16.78 & $-$14.45 \\
- 2 & $-$14.12 & $-$17.37 & $-$16.03 \\
- 3 & $-$16.10 & $-$18.09 & $-$17.54 \\
- 4 & $-$13.35 & $-$16.76 & $-$15.39 \\
- 5 & $-$12.52 & $-$16.50 & $-$15.19 \\
- 6 & $-$16.15 & $-$18.93 & $-$17.59 \\
- 7 & $-$14.13 & $-$17.38 & $-$16.04 \\
- 8 & $-$16.19 & $-$18.95 & $-$17.63 \\
- 9 & $-$13.40 & $-$17.39 & $-$15.44 \\
-10 & $-$11.72 & $-$16.23 & $-$14.00 \\
-11 & $-$16.10 & $-$18.09 & $-$17.54 \\
-12 & $-$14.15 & $-$18.09 & $-$16.06 \\
-13 & $-$16.17 & $-$18.94 & $-$17.61 \\
-14 & $-$14.99 & $-$18.09 & $-$16.72 \\
-15 & $-$12.73 & $-$16.76 & $-$14.87 \\
-16 & $-$12.75 & $-$16.77 & $-$15.40 \\
-17 & $-$13.33 & $-$16.75 & $-$15.37 \\
-18 & $-$13.37 & $-$17.36 & $-$15.41 \\
-19 & $-$14.97 & $-$18.07 & $-$16.69 \\
-20 & $-$15.00 & $-$18.08 & $-$16.72 \\
-21 & $-$15.03 & $-$18.10 & $-$17.56 \\
-22 & $-$11.70 & $-$16.21 & $-$13.98 \\
-23 & $-$12.72 & $-$16.74 & $-$14.86 \\
-24 & $-$15.00 & $-$18.08 & $-$16.72 \\
+0  & E\ra D\ra A               & 12 \\
+1  & D\ra A                    & 13 \\
+2  & A\ra B                    & 22 \\
+3  & A\ra C                    & 17 \\
+4  & A\ra C\ra E               & 5  \\
+5  & A\ra D\ra E               & 6  \\
+6  & A\ra D                    & 13 \\
+7  & B\ra A                    & 22 \\
+8  & B\ra C                    & 7  \\
+9  & B\ra C\ra E               & 6  \\
+10 & B\ra C\ra E\ra D          & 6  \\
+11 & C\ra A                    & 17 \\
+12 & C\ra B                    & 7  \\
+13 & C\ra E                    & 4  \\
+14 & C\ra E\ra D               & 4  \\
+15 & E\ra C\ra B               & 6  \\
+16 & E\ra C                    & 4  \\
+17 & E\ra D                    & 2  \\
+18 & E\ra C\ra A\ra D          & 2  \\
+19 & D\ra E\ra C\ra B          & 6  \\
+20 & D\ra E\ra C               & 4  \\
+21 & D\ra E                    & 4  \\
 \bottomrule
 \end{tabular}
 \end{subtable}
 \end{table}
 
-% --- Resilience Network 1: London-Birmingham removed ---
-\begin{table}[H]
-\centering
-\caption{Network~1 resilience (London--Birmingham removed).}
-\begin{subtable}[t]{0.48\textwidth}
-\centering
-\caption{Routes~0--27.}
-\label{tab:resil_n1_a}
-\small
-\begin{tabular}{lrrr}
-\toprule
- & NZ-DSF & PCSF* & NDSF \\
-\midrule
-Capacity (Tb/s) &  77.20 &  97.60 &  97.60 \\
-Amplifiers      &     32 &     20 &     31 \\
-\midrule
-Route & \multicolumn{3}{c}{NSR (dB)} \\
-\cmidrule(lr){2-4}
- 0 & $-$12.04 & $-$16.02 & $-$14.69 \\
- 1 & $-$11.09 & $-$15.52 & $-$13.76 \\
- 2 & $-$10.39 & $-$15.18 & $-$13.08 \\
- 3 & $-$13.29 & $-$17.29 & $-$15.31 \\
- 4 & $-$13.19 & $-$16.51 & $-$15.20 \\
- 5 & $-$11.57 & $-$16.07 & $-$13.82 \\
- 6 & $-$11.18 & $-$15.66 & $-$13.87 \\
- 7 & $-$12.03 & $-$16.03 & $-$14.22 \\
- 8 & $-$14.99 & $-$18.09 & $-$16.72 \\
- 9 & $-$12.64 & $-$16.67 & $-$14.77 \\
-10 & $-$14.00 & $-$17.21 & $-$15.88 \\
-11 & $-$12.59 & $-$16.56 & $-$14.69 \\
-12 & $-$13.89 & $-$17.12 & $-$16.45 \\
-13 & $-$12.53 & $-$16.46 & $-$15.13 \\
-14 & $-$10.35 & $-$15.14 & $-$13.05 \\
-15 & $-$13.90 & $-$17.10 & $-$16.45 \\
-16 & $-$12.51 & $-$16.47 & $-$15.12 \\
-17 & $-$11.13 & $-$15.60 & $-$13.82 \\
-18 & $-$12.57 & $-$16.57 & $-$15.20 \\
-19 & $-$13.99 & $-$17.22 & $-$16.55 \\
-20 & $-$12.58 & $-$16.51 & $-$15.17 \\
-21 & $-$15.98 & $-$18.81 & $-$17.41 \\
-22 & $-$15.81 & $-$17.74 & $-$17.23 \\
-23 & $-$12.04 & $-$16.04 & $-$14.23 \\
-24 & $-$13.89 & $-$17.13 & $-$15.77 \\
-25 & $-$12.50 & $-$16.44 & $-$14.59 \\
-26 & $-$17.42 & $-$18.75 & $-$18.41 \\
-27 & $-$14.75 & $-$17.77 & $-$16.43 \\
-\bottomrule
-\end{tabular}
-\end{subtable}
-\hfill
-\begin{subtable}[t]{0.48\textwidth}
-\centering
-\caption{Routes~28--56 (continued).}
-\label{tab:resil_n1_b}
-\small
-\begin{tabular}{lrrr}
-\toprule
-% Route & NZ-DSF & PCSF* & NDSF \\
-% \cmidrule(lr){2-4}
-28 & $-$13.98 & $-$17.17 & $-$16.52 \\
-29 & $-$12.60 & $-$16.56 & $-$15.21 \\
-30 & $-$16.00 & $-$18.83 & $-$17.44 \\
-31 & $-$15.78 & $-$17.71 & $-$17.19 \\
-32 & $-$13.88 & $-$17.08 & $-$15.75 \\
-33 & $-$12.52 & $-$16.49 & $-$14.62 \\
-34 & $-$17.40 & $-$18.68 & $-$18.36 \\
-35 & $-$14.78 & $-$17.84 & $-$16.49 \\
-36 & $-$12.64 & $-$16.65 & $-$15.27 \\
-37 & $-$12.10 & $-$16.08 & $-$14.74 \\
-38 & $-$11.15 & $-$15.60 & $-$13.82 \\
-39 & $-$13.88 & $-$17.12 & $-$15.76 \\
-40 & $-$13.30 & $-$17.30 & $-$15.33 \\
-41 & $-$12.52 & $-$16.46 & $-$14.61 \\
-42 & $-$13.18 & $-$16.48 & $-$15.17 \\
-43 & $-$14.99 & $-$18.09 & $-$16.72 \\
-44 & $-$13.89 & $-$17.10 & $-$15.76 \\
-45 & $-$12.50 & $-$16.47 & $-$14.60 \\
-46 & $-$14.85 & $-$17.95 & $-$16.57 \\
-47 & $-$13.99 & $-$17.20 & $-$15.87 \\
-48 & $-$12.60 & $-$16.59 & $-$14.72 \\
-49 & $-$14.98 & $-$18.06 & $-$17.52 \\
-50 & $-$17.40 & $-$18.73 & $-$18.39 \\
-51 & $-$14.78 & $-$17.81 & $-$16.47 \\
-52 & $-$11.58 & $-$16.08 & $-$13.83 \\
-53 & $-$17.42 & $-$18.70 & $-$18.39 \\
-54 & $-$14.75 & $-$17.81 & $-$16.45 \\
-55 & $-$12.65 & $-$16.67 & $-$14.77 \\
-56 & $-$14.85 & $-$17.95 & $-$16.57 \\
-\bottomrule
-\end{tabular}
-\end{subtable}
-\end{table}
+\subsection{Capacity and NSR}
 
-% --- Resilience Network 2: London-Leeds removed ---
+% ------------------------------------------------------------------
+% Table 2: Total capacity and amplifier count per fiber type
+% ------------------------------------------------------------------
 \begin{table}[H]
 \centering
-\caption{Network~2 resilience (London--Leeds removed).}
+\caption{Total network capacity (Tb/s) and amplifier count by fiber type.}
+\label{tab:summary}
 \begin{subtable}[t]{0.48\textwidth}
 \centering
-\caption{Routes~0--15.}
-\label{tab:resil_n2_a}
-\small
-\begin{tabular}{lrrr}
+\caption{Network 1}
+\begin{tabular}{lccc}
 \toprule
  & NZ-DSF & PCSF & NDSF \\
 \midrule
-Capacity (Tb/s) & 145.20 & 152.00 & 152.00 \\
-Amplifiers      &     29 &     17 &     28 \\
-\midrule
-Route & \multicolumn{3}{c}{NSR (dB)} \\
-\cmidrule(lr){2-4}
- 0 & $-$13.32 & $-$16.73 & $-$15.36 \\
- 1 & $-$11.97 & $-$16.52 & $-$14.14 \\
- 2 & $-$13.21 & $-$17.22 & $-$15.23 \\
- 3 & $-$12.05 & $-$16.10 & $-$14.24 \\
- 4 & $-$14.97 & $-$18.07 & $-$16.69 \\
- 5 & $-$11.55 & $-$15.59 & $-$13.79 \\
- 6 & $-$10.60 & $-$15.42 & $-$12.91 \\
- 7 & $-$11.47 & $-$15.95 & $-$13.70 \\
- 8 & $-$10.66 & $-$15.09 & $-$12.98 \\
- 9 & $-$12.57 & $-$16.57 & $-$14.68 \\
-10 & $-$15.88 & $-$18.76 & $-$17.32 \\
-11 & $-$13.83 & $-$17.09 & $-$15.70 \\
-12 & $-$15.93 & $-$17.91 & $-$17.37 \\
-13 & $-$13.80 & $-$17.78 & $-$15.66 \\
-14 & $-$13.12 & $-$16.50 & $-$15.13 \\
-15 & $-$11.88 & $-$16.41 & $-$14.03 \\
+Capacity (Tb/s) & 224.40 & 240.00 & 240.00 \\
+Amplifiers      & 38     & 22     & 36     \\
 \bottomrule
 \end{tabular}
 \end{subtable}
 \hfill
 \begin{subtable}[t]{0.48\textwidth}
 \centering
-\caption{Routes~16--31 (continued).}
-\label{tab:resil_n2_b}
-\small
-\begin{tabular}{lrrr}
+\caption{Network 2}
+\begin{tabular}{lccc}
 \toprule
-% Route & NZ-DSF & PCSF & NDSF \\
-% \cmidrule(lr){2-4}
-16 & $-$15.88 & $-$18.76 & $-$17.32 \\
-17 & $-$13.92 & $-$17.22 & $-$15.80 \\
-18 & $-$15.88 & $-$18.74 & $-$17.31 \\
-19 & $-$13.83 & $-$17.10 & $-$15.71 \\
-20 & $-$13.10 & $-$17.08 & $-$15.09 \\
-21 & $-$11.90 & $-$15.90 & $-$14.06 \\
-22 & $-$11.30 & $-$15.71 & $-$13.47 \\
-23 & $-$10.47 & $-$14.82 & $-$12.74 \\
-24 & $-$16.08 & $-$18.07 & $-$17.52 \\
-25 & $-$13.80 & $-$17.78 & $-$15.66 \\
-26 & $-$15.88 & $-$18.74 & $-$17.31 \\
-27 & $-$13.92 & $-$17.23 & $-$15.81 \\
-28 & $-$14.80 & $-$17.90 & $-$16.51 \\
-29 & $-$12.34 & $-$16.30 & $-$14.39 \\
-30 & $-$14.53 & $-$17.63 & $-$16.20 \\
-31 & $-$14.75 & $-$17.85 & $-$16.45 \\
+ & NZ-DSF & PCSF & NDSF \\
+\midrule
+Capacity (Tb/s) & 286.40 & 302.40 & 302.40 \\
+Amplifiers      & 32     & 21     & 32     \\
 \bottomrule
 \end{tabular}
 \end{subtable}
 \end{table}
+
+% ------------------------------------------------------------------
+% Table 3: Per-node capacity by fiber type
+% ------------------------------------------------------------------
+\begin{table}[H]
+\centering
+\caption{Capacity delivered to each node (Tb/s) by fiber type.}
+\label{tab:node_cap}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network 1}
+\begin{tabular}{lccc}
+\toprule
+Node & NZ-DSF & PCSF & NDSF \\
+\midrule
+London (A)     & 71.60 & 76.80 & 76.80 \\
+Birmingham (B) & 51.20 & 51.20 & 51.20 \\
+Manchester (C) & 40.00 & 44.80 & 44.80 \\
+Leeds (D)      & 33.60 & 35.20 & 35.20 \\
+Glasgow (E)    & 28.00 & 32.00 & 32.00 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network 2}
+\begin{tabular}{lccc}
+\toprule
+Node & NZ-DSF & PCSF & NDSF \\
+\midrule
+London (A)     &  97.60 & 102.40 & 102.40 \\
+Birmingham (B) &  63.20 &  65.60 &  65.60 \\
+Manchester (C) &  49.60 &  51.20 &  51.20 \\
+Leeds (D)      &  38.40 &  43.20 &  43.20 \\
+Glasgow (E)    &  37.60 &  40.00 &  40.00 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+% ------------------------------------------------------------------
+% Table 4: NSR per route and fiber type
+% ------------------------------------------------------------------
+\begin{table}[H]
+\centering
+\caption{Route NSR (dB) by fiber type.}
+\label{tab:nsr}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+% \scriptsize
+\caption{Network 1}
+\begin{tabular}{cccc}
+\toprule
+Route & NZ-DSF & PCSF & NDSF \\
+\midrule
+0  & $-$16.17 & $-$18.94 & $-$17.61 \\
+1  & $-$14.17 & $-$17.44 & $-$16.08 \\
+2  & $-$12.17 & $-$16.70 & $-$14.38 \\
+3  & $-$13.45 & $-$17.43 & $-$15.49 \\
+4  & $-$14.13 & $-$17.39 & $-$16.71 \\
+5  & $-$12.77 & $-$16.78 & $-$15.42 \\
+6  & $-$12.17 & $-$16.22 & $-$14.83 \\
+7  & $-$15.03 & $-$18.10 & $-$17.56 \\
+8  & $-$16.15 & $-$18.93 & $-$17.59 \\
+9  & $-$14.11 & $-$17.38 & $-$16.70 \\
+10 & $-$16.18 & $-$18.16 & $-$17.62 \\
+11 & $-$12.02 & $-$16.05 & $-$14.21 \\
+12 & $-$13.32 & $-$17.30 & $-$15.36 \\
+13 & $-$11.52 & $-$15.98 & $-$13.75 \\
+14 & $-$14.17 & $-$18.09 & $-$16.08 \\
+15 & $-$14.15 & $-$17.42 & $-$16.75 \\
+16 & $-$16.19 & $-$18.95 & $-$17.63 \\
+17 & $-$14.90 & $-$18.00 & $-$16.62 \\
+18 & $-$12.61 & $-$16.61 & $-$14.73 \\
+19 & $-$17.73 & $-$19.01 & $-$18.68 \\
+20 & $-$15.05 & $-$18.11 & $-$16.78 \\
+21 & $-$12.56 & $-$16.55 & $-$14.66 \\
+22 & $-$12.18 & $-$16.23 & $-$14.86 \\
+23 & $-$13.36 & $-$16.78 & $-$15.40 \\
+24 & $-$14.95 & $-$18.04 & $-$16.67 \\
+25 & $-$13.89 & $-$17.18 & $-$15.76 \\
+26 & $-$14.69 & $-$17.80 & $-$16.38 \\
+27 & $-$14.10 & $-$17.39 & $-$16.01 \\
+28 & $-$15.01 & $-$18.08 & $-$17.54 \\
+29 & $-$10.76 & $-$15.59 & $-$13.11 \\
+30 & $-$15.10 & $-$18.16 & $-$16.82 \\
+31 & $-$17.73 & $-$19.01 & $-$18.68 \\
+32 & $-$12.55 & $-$16.56 & $-$14.66 \\
+33 & $-$14.75 & $-$17.85 & $-$16.45 \\
+34 & $-$14.06 & $-$17.35 & $-$15.97 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+% \scriptsize
+\caption{Network 2}
+\begin{tabular}{cccc}
+\toprule
+Route & NZ-DSF & PCSF & NDSF \\
+\midrule
+0  & $-$12.75 & $-$16.77 & $-$15.40 \\
+1  & $-$15.03 & $-$18.10 & $-$17.56 \\
+2  & $-$16.11 & $-$18.91 & $-$17.55 \\
+3  & $-$16.06 & $-$18.05 & $-$17.50 \\
+4  & $-$13.34 & $-$16.75 & $-$15.38 \\
+5  & $-$12.64 & $-$16.65 & $-$15.28 \\
+6  & $-$14.94 & $-$18.02 & $-$17.48 \\
+7  & $-$16.11 & $-$18.91 & $-$17.55 \\
+8  & $-$16.07 & $-$18.87 & $-$17.51 \\
+9  & $-$13.35 & $-$17.35 & $-$15.39 \\
+10 & $-$11.68 & $-$16.20 & $-$13.96 \\
+11 & $-$15.99 & $-$17.98 & $-$17.44 \\
+12 & $-$16.07 & $-$18.87 & $-$17.51 \\
+13 & $-$15.02 & $-$18.11 & $-$16.74 \\
+14 & $-$12.74 & $-$16.78 & $-$14.89 \\
+15 & $-$13.30 & $-$17.29 & $-$15.33 \\
+16 & $-$14.95 & $-$18.04 & $-$16.67 \\
+17 & $-$15.00 & $-$18.08 & $-$16.72 \\
+18 & $-$11.59 & $-$15.63 & $-$14.27 \\
+19 & $-$11.61 & $-$16.10 & $-$13.87 \\
+20 & $-$12.65 & $-$16.67 & $-$14.78 \\
+21 & $-$14.90 & $-$18.00 & $-$16.62 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+\subsection{Resilience}
+
+% ------------------------------------------------------------------
+% Table 5: Resilience — total capacity, same vs re-routed (PCSF)
+% ------------------------------------------------------------------
+\begin{table}[H]
+\centering
+\caption{Worst-case total network capacity (Tb/s) after single edge removal (PCSF fiber),
+  comparing fixed channel assignment with re-routing.}
+\label{tab:res_summary}
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network 1 (worst edge: Birmingham--Manchester)}
+\begin{tabular}{lc}
+\toprule
+Scenario & Capacity (Tb/s) \\
+\midrule
+Same channel assignment  & 161.60 \\
+Re-routed                & 227.20 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.48\textwidth}
+\centering
+\caption{Network 2 (worst edge: Manchester--Glasgow)}
+\begin{tabular}{lc}
+\toprule
+Scenario & Capacity (Tb/s) \\
+\midrule
+Same channel assignment  & 227.20 \\
+Re-routed                & 176.00 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+% ------------------------------------------------------------------
+% Table 6: Resilience — per-node capacity, same vs re-routed (PCSF)
+% ------------------------------------------------------------------
+\begin{table}[H]
+\centering
+\caption{Capacity delivered to each node (Tb/s) after worst-case edge removal (PCSF fiber).}
+\label{tab:res_node_cap}
+\begin{subtable}[t]{0.45\textwidth}
+\centering
+\caption{Network 1 (Birmingham--Manchester removed)}
+\begin{tabular}{lccc}
+\toprule
+Node & Unchanged & Re-routed \\
+\midrule
+London (A)     & 59.20 & 76.80 \\
+Birmingham (B) & 35.20 & 49.60 \\
+Manchester (C) & 33.60 & 38.40 \\
+Leeds (D)      & 17.60 & 32.00 \\
+Glasgow (E)    & 16.00 & 30.40 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\hfill
+\begin{subtable}[t]{0.45\textwidth}
+\centering
+\caption{Network 2 (Manchester--Glasgow removed)}
+\begin{tabular}{lccc}
+\toprule
+Node & Unchanged & Re-routed \\
+\midrule
+London (A)     & 102.40 & 59.20 \\
+Birmingham (B) &  46.40 & 41.60 \\
+Manchester (C) &  38.40 & 28.80 \\
+Leeds (D)      &  24.00 & 24.00 \\
+Glasgow (E)    &  16.00 & 22.40 \\
+\bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+\section{Discussion}
+
+\subsection{Assumptions}
+It has been assumed that ROADMs do not add any NSR or loss. In reality this is not the case as there will be some crosstalk and loss as wavelengths are redirected. A brick-wall pulse shape is also assumed, this will not cause significant inaccuracy as root-raised cosine (RRC) pulses come close to achieving this. Other sources of noise such as thermal noise and shot noise have been neglected, this should also be acceptable as the overall NSR is dominated by non-linear and amplifier noise.
+
+\subsection{Routing and Channel Assignment}
+Table \ref{tab:routes} shows the routes that data can be transmitted through in each network and the number of channels assigned to each route. The optimization target was to minimize the usage of the busiest link and , since each link has the same capacity, maximize the total network capacity. The routing in Network 1 is more evenly spread than Network 2, likely due to the extra available links. Network 2 employs a small number of heavily loaded short routes between London, Manchester, and Birmingham which is ideal for the best-case capacity but could cause a significant drop in capacity if there was an outage.
+
+\subsection{Effect of Fiber Type}
+Table \ref{tab:summary} compares the best capacity and amplifier usage for eahc fiber type. PCSF offers the best capacity for both networks. It had the lowest attenuation (\(0.15 \ dB/km\)), meaning longer spans were possible. It also had the greatest dispersion (\(22 \ ps/nm/km\)) and effective area (\(125 \ \mu m^2\)) which would reduce the \(C_{NLI}\). The combined effect is fewer amplifiers and less non-linear noise, resulting in a low NSR (as shown in Table \ref{tab:nsr}) that allows the transceivers to operate at a high data rate. Here the cost of each fiber is not considered but would inform the choice of fiber type for a practical network.
+
+\subsection{Network Comparison - Best Case}
+From Figure \ref{fig:networks} the total fiber length can be calculated as \(2674 \ km\) for Network 1 and \(2854 \ km\) for Network 2. Table \ref{tab:summary} demonstrates that Network 2 can achieve a higher capacity, \(25.8\%\) higher than Network 1. The London-Manchester link is evidently very useful as it directly joins the 3 busiest nodes (London, Birmingham, Manchester). The cost of this improved capacity is minimal, with one less amplifier needed when using PCSF and an increase in total fiber length of \(6.7 \%\) from Network 1. To verify that this greater capacity is not being poorly allocated, Table \ref{tab:node_cap} shows that Network 2 also delivers greater capacity to each individual city.
+
+\subsection{Network Comparison - Resilience}
+Table \ref{tab:res_summary} compares the worst case performance of each network when there is an outage on one link before and after re-routing can occur. Network 1 would experience a drop to \(67.3\%\) of its best-case capacity immediately after the outage occurs but could be brought back up to \(94.7\%\) after re-routing. Network 2 first drops to \(75.2\%\) but re-routing reduces this to \(58.2\%\). This drop in performance after re-routing can be explained by the need to distribute data according to the demand between each pair of cities. Severing the Manchester-Glasgow link does not affect the very high capacity links between London, Birmingham, and Manchester but does cut off much of the data flowing to/from Glasgow which is not reflected in the total capacity figure. The extra links in Network 1 thus prove useful for resilience, allowing for a higher capacity after one link outage.
+
+\subsection{Network Choice}
+The choice between Network 1 and 2 depends on the outage probability. If outages are unlikely then Network 2 is the best option. The effect of only one outage was analyzed here but if it is likely that multiple outages could occur at the same time then Network 1 would be preferred. There was little difference in the cost of each network, with both having almost the same fiber length and number of amplifiers.
+\section{Conclusions}
+\begin{itemize}
+    \item Network capacity depends heavily on topology, it is beneficial to directly connect the busiest nodes.
+    \item PCSF is the most performant fiber type for this application due to its low attenuation and noise.
+    \item Resilience also depends on topology, adding more links improves the resilience at the cost of more fiber and amplifiers.
+    \item The final choice of network topology depends on the outage proabability, average demand, and tolerance to link outages.
+\end{itemize}
+
+
+
 
 \end{document}

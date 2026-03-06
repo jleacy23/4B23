@@ -3,6 +3,15 @@ from src.noise import *
 from src.params import *
 from src.routing import generate_network_params
 
+# Single-letter abbreviations for each city (printed as a key in results)
+CITY_KEYS = {
+    "London": "A",
+    "Birmingham": "B",
+    "Manchester": "C",
+    "Leeds": "D",
+    "Glasgow": "E",
+}
+
 
 def build_networks(configs, excluded_edge=None):
     """
@@ -134,8 +143,10 @@ def get_results(networks):
             ]
             link_amp_flags = [False] * len(network["links"])
             transceiver_amps = 0
+            route_capacities = []
+            node_capacity = {}
 
-            for route_idx, (link_indices, route_channels) in enumerate(
+            for route_idx, (link_indices, route_channels, src, dst, *_) in enumerate(
                 network["routes"]
             ):
                 nsr_linear = sum(results[li][0] for li in link_indices)
@@ -189,7 +200,10 @@ def get_results(networks):
                 if best_data_rate > 0 and best_needs_final_amp:
                     transceiver_amps += 1
 
-                total_capacity += best_data_rate * route_channels
+                route_cap = best_data_rate * route_channels
+                total_capacity += route_cap
+                route_capacities.append(route_cap)
+                node_capacity[dst] = node_capacity.get(dst, 0) + route_cap
                 route_nsrs.append(best_route_nsr_db)
 
             total_amps = sum(link_amp_counts) + transceiver_amps
@@ -199,80 +213,196 @@ def get_results(networks):
                     "total_capacity": total_capacity,
                     "total_amps": total_amps,
                     "route_nsrs": route_nsrs,
+                    "route_capacities": route_capacities,
+                    "node_capacity": node_capacity,
                 }
             )
 
-        all_results.append({"name": network["name"], "fibers": fiber_results})
+        all_results.append(
+            {
+                "name": network["name"],
+                "fibers": fiber_results,
+                "channels": [rt[1] for rt in network["routes"]],
+                "route_nodes": [rt[4] for rt in network["routes"]],
+            }
+        )
 
     return all_results
 
 
-def print_results(results, label=""):
-    """Print results in the standard format."""
+def get_resilience_results(networks, baseline_results, edge_a, edge_b):
+    """
+    Compute resilience results without re-routing.
+    Routes passing through the removed edge (edge_a <-> edge_b) have capacity
+    set to zero; all other routes keep their baseline capacity.
+    Returns result dicts with node_capacity but no route_nsrs / total_amps.
+    """
+    all_results = []
+    for network, base_net_result in zip(networks, baseline_results):
+        if network is None or base_net_result is None:
+            all_results.append(None)
+            continue
+
+        # Find link indices for the removed undirected edge (both directions)
+        removed_links = {
+            li
+            for li, (a, b) in enumerate(network["link_nodes"])
+            if (a == edge_a and b == edge_b) or (a == edge_b and b == edge_a)
+        }
+
+        fiber_results = []
+        for base_fr in base_net_result["fibers"]:
+            total_capacity = 0
+            node_capacity = {}
+
+            for route_idx, (link_indices, route_channels, src, dst, *_) in enumerate(
+                network["routes"]
+            ):
+                if removed_links and any(li in removed_links for li in link_indices):
+                    cap = 0.0
+                else:
+                    cap = base_fr["route_capacities"][route_idx]
+
+                total_capacity += cap
+                node_capacity[dst] = node_capacity.get(dst, 0) + cap
+
+            fiber_results.append(
+                {
+                    "fiber": base_fr["fiber"],
+                    "total_capacity": total_capacity,
+                    "node_capacity": node_capacity,
+                }
+            )
+
+        all_results.append(
+            {
+                "name": network["name"],
+                "fibers": fiber_results,
+                "channels": base_net_result["channels"],
+                "route_nodes": base_net_result["route_nodes"],
+            }
+        )
+
+    return all_results
+
+
+def print_results(results, label="", show_nsr=True, file=None):
+    """Write results in the standard format to file (default: stdout)."""
     header = f"Results{' — ' + label if label else ''}"
-    print(f"\n{'='*60}")
-    print(f"  {header}")
-    print(f"{'='*60}")
+    print(f"\n{'='*60}", file=file)
+    print(f"  {header}", file=file)
+    print(f"{'='*60}", file=file)
     for net_result in results:
         if net_result is None:
-            print("  (network infeasible — disconnected graph)")
+            print("  (network infeasible — disconnected graph)", file=file)
             continue
-        print(f"\n  Network: {net_result['name']}")
+        print(f"\n  Network: {net_result['name']}", file=file)
+        # Print city abbreviation key
+        key_str = ", ".join(
+            f"{v} = {k}" for k, v in sorted(CITY_KEYS.items(), key=lambda x: x[1])
+        )
+        print(f"  Key: {key_str}", file=file)
+        route_nodes = net_result.get("route_nodes", [])
+        if show_nsr:
+            for i, ch in enumerate(net_result["channels"]):
+                if i < len(route_nodes):
+                    path_str = (
+                        " ("
+                        + "\u2192".join(CITY_KEYS.get(n, n) for n in route_nodes[i])
+                        + ")"
+                    )
+                else:
+                    path_str = ""
+                print(f"    Route {i}{path_str}: Channels = {ch}", file=file)
         for fr in net_result["fibers"]:
+            amps_str = (
+                f"  |  Amplifiers: {fr['total_amps']}" if "total_amps" in fr else ""
+            )
             print(
                 f"    Fiber: {fr['fiber']}  |  "
-                f"Total capacity: {fr['total_capacity']:.2f} Tb/s  |  "
-                f"Amplifiers: {fr['total_amps']}"
+                f"Total capacity: {fr['total_capacity']:.2f} Tb/s" + amps_str,
+                file=file,
             )
-            for i, nsr in enumerate(fr["route_nsrs"]):
-                nsr_str = f"{nsr:.2f} dB" if not np.isnan(nsr) else "invalid"
-                print(f"      Route {i}: NSR = {nsr_str}")
+            for node, cap in sorted(fr["node_capacity"].items()):
+                node_k = CITY_KEYS.get(node, node)
+                print(f"      Node {node} ({node_k}): {cap:.2f} Tb/s", file=file)
+            if show_nsr and "route_nsrs" in fr:
+                for i, nsr in enumerate(fr["route_nsrs"]):
+                    nsr_str = f"{nsr:.2f} dB" if not np.isnan(nsr) else "invalid"
+                    if i < len(route_nodes):
+                        path_str = (
+                            " ("
+                            + "\u2192".join(CITY_KEYS.get(n, n) for n in route_nodes[i])
+                            + ")"
+                        )
+                    else:
+                        path_str = ""
+                    print(f"      Route {i}{path_str}: NSR = {nsr_str}", file=file)
 
 
 def main():
-    # ------------------------------------------------------------------
-    # Baseline results
-    # ------------------------------------------------------------------
-    networks = build_networks(NETWORK_CONFIGS)
-    baseline = get_results(networks)
-    print_results(baseline, label="Baseline")
+    output_path = "report/results.txt"
+    with open(output_path, "w", encoding="utf-8") as f:
+        # ------------------------------------------------------------------
+        # Baseline results
+        # ------------------------------------------------------------------
+        networks = build_networks(NETWORK_CONFIGS)
+        baseline = get_results(networks)
+        print_results(baseline, label="Baseline", file=f)
 
-    # ------------------------------------------------------------------
-    # Resilience: repeat with each undirected edge removed in turn
-    # For each network, track the edge deletion that gives the worst
-    # (lowest) total capacity across all fiber types.
-    # ------------------------------------------------------------------
-    print(f"\n\n{'#'*60}")
-    print("  Resilience Analysis — worst case per edge deletion")
-    print(f"{'#'*60}")
+        # ------------------------------------------------------------------
+        # Resilience: repeat with each undirected edge removed in turn
+        # For each network, track the edge deletion that gives the worst
+        # (lowest) total capacity across all fiber types.
+        # ------------------------------------------------------------------
+        print(f"\n\n{'#'*60}", file=f)
+        print("  Resilience Analysis — worst case per edge deletion", file=f)
+        print(f"{'#'*60}", file=f)
 
-    for ci, config in enumerate(NETWORK_CONFIGS):
-        worst_capacity = float("inf")
-        worst_label = ""
-        worst_result = None
+        for ci, config in enumerate(NETWORK_CONFIGS):
+            worst_capacity = float("inf")
+            worst_label = ""
+            worst_result = None
+            worst_ei = None
 
-        for ei, edge in enumerate(config["edges"]):
-            edge_label = f"{edge[0]}–{edge[1]}"
-            reduced_networks = build_networks(NETWORK_CONFIGS, excluded_edge=(ci, ei))
-            result = get_results(reduced_networks)
+            for ei, edge in enumerate(config["edges"]):
+                edge_a, edge_b = edge[0], edge[1]
+                edge_label = f"{edge_a}\u2013{edge_b}"
+                result = get_resilience_results(networks, baseline, edge_a, edge_b)
 
-            # Best total capacity for this network with this edge removed
-            net_result = result[ci]
-            if net_result is None:
-                cap = 0.0
-            else:
-                cap = max(fr["total_capacity"] for fr in net_result["fibers"])
+                net_result = result[ci]
+                if net_result is None:
+                    cap = 0.0
+                else:
+                    cap = max(fr["total_capacity"] for fr in net_result["fibers"])
 
-            if cap < worst_capacity:
-                worst_capacity = cap
-                worst_label = f"{config['name']} without {edge_label}"
-                worst_result = result
+                if cap < worst_capacity:
+                    worst_capacity = cap
+                    worst_label = f"{config['name']} without {edge_label}"
+                    worst_result = result
+                    worst_ei = ei
 
-        if worst_result is not None:
-            print_results(
-                worst_result,
-                label=f"Worst case for {config['name']} (edge removed: {worst_label})",
-            )
+            if worst_result is not None:
+                print_results(
+                    worst_result,
+                    label=f"Worst case for {config['name']} — same channel assignment (edge removed: {worst_label})",
+                    show_nsr=False,
+                    file=f,
+                )
+
+                # Re-run routing and capacity calculation with the worst edge removed
+                rerouted_networks = build_networks(
+                    NETWORK_CONFIGS, excluded_edge=(ci, worst_ei)
+                )
+                rerouted_results = get_results(rerouted_networks)
+                print_results(
+                    rerouted_results,
+                    label=f"Worst case for {config['name']} — re-routed (edge removed: {worst_label})",
+                    show_nsr=False,
+                    file=f,
+                )
+
+    print(f"Results written to {output_path}")
 
 
 if __name__ == "__main__":

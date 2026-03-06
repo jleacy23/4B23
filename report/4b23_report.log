@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.4)  6 MAR 2026 00:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.4)  6 MAR 2026 17:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -372,66 +372,88 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <14.4> on input line 16.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 16.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 75.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 75.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 75.
+ [1
 
-Overfull \hbox (16.77328pt too wide) in paragraph at lines 40--41
+{c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
+Overfull \hbox (8.45204pt too wide) in paragraph at lines 219--227
  [][] 
  []
 
 
-Overfull \hbox (16.77328pt too wide) in paragraph at lines 61--62
- [][] 
- []
-
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 71.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 71.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 71.
-[1
-
-{c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 118.
-
-Overfull \hbox (2.03873pt too wide) in paragraph at lines 118--151
- [][] 
- []
-
-
-Overfull \hbox (2.03873pt too wide) in paragraph at lines 158--194
- [][] 
- []
-
-[3]
-Overfull \hbox (2.03873pt too wide) in paragraph at lines 206--245
+Overfull \hbox (8.45204pt too wide) in paragraph at lines 232--240
  [][] 
  []
 
 [4]
-Overfull \hbox (1.4304pt too wide) in paragraph at lines 299--326
+Overfull \hbox (6.73822pt too wide) in paragraph at lines 253--264
  [][] 
  []
 
-[5] [6] (./4b23_report.aux)
+
+Overfull \hbox (9.36177pt too wide) in paragraph at lines 269--280
+ [][] 
+ []
+
+[5]
+Underfull \hbox (badness 2875) in paragraph at lines 384--384
+[]\OT1/cmr/m/n/10.95 (a) |Net-work 1 (worst edge: Birmingham--
+ []
+
+
+Overfull \hbox (6.7851pt too wide) in paragraph at lines 385--393
+ [][] 
+ []
+
+
+Underfull \hbox (badness 4036) in paragraph at lines 397--397
+[]\OT1/cmr/m/n/10.95 (b) |Net-work 2 (worst edge: Manchester--
+ []
+
+
+Overfull \hbox (6.7851pt too wide) in paragraph at lines 398--406
+ [][] 
+ []
+
+[6]
+Overfull \hbox (11.38457pt too wide) in paragraph at lines 419--430
+ [][] 
+ []
+
+
+Underfull \hbox (badness 4229) in paragraph at lines 434--434
+[]\OT1/cmr/m/n/10.95 (b) |Net-work 2 (Manchester--Glasgow re-
+ []
+
+
+Overfull \hbox (11.38457pt too wide) in paragraph at lines 435--446
+ [][] 
+ []
+
+[7] [8] (./4b23_report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13795 strings out of 469515
- 289179 string characters out of 5467663
- 693897 words of memory out of 5000000
- 42246 multiletter control sequences out of 15000+600000
- 633498 words of font info for 59 fonts, out of 8000000 for 9000
+ 13791 strings out of 469515
+ 289098 string characters out of 5467663
+ 684707 words of memory out of 5000000
+ 42241 multiletter control sequences out of 15000+600000
+ 633219 words of font info for 58 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 84i,11n,104p,935b,901s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on 4b23_report.pdf (6 pages, 137851 bytes).
+ 84i,11n,104p,979b,895s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on 4b23_report.pdf (8 pages, 148477 bytes).
 PDF statistics:
- 76 PDF objects out of 1000 (max. 8388607)
- 47 compressed objects within 1 object stream
+ 89 PDF objects out of 1000 (max. 8388607)
+ 57 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

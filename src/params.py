@@ -84,8 +84,8 @@ NETWORK_CONFIGS = [
             ("Manchester", "Glasgow", 295),
             ("Glasgow", "Leeds", 288),
         ],
-        "max_paths": 6,
-        "min_split_fraction": 0.05,
+        "max_paths": 4,
+        "min_split_fraction": 0.0,
     },
     {
         "name": "Network 2",
@@ -97,8 +97,8 @@ NETWORK_CONFIGS = [
             ("Manchester", "Glasgow", 295),
             ("Glasgow", "Leeds", 288),
         ],
-        "max_paths": 6,
-        "min_split_fraction": 0.05,
+        "max_paths": 4,
+        "min_split_fraction": 0.0,
     },
 ]
 
@@ -107,6 +107,7 @@ DEMANDS = {
     ("London", "Birmingham"): 0.12,
     ("London", "Manchester"): 0.09,
     ("London", "Glasgow"): 0.06,
+    ("London", "Leeds"): 0.07,
     ("Birmingham", "London"): 0.12,
     ("Birmingham", "Manchester"): 0.04,
     ("Birmingham", "Glasgow"): 0.03,

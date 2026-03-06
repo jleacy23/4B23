@@ -518,11 +518,14 @@ def generate_network_params(
     # Build link index mapping for routes
     link_index = {edge: i for i, edge in enumerate(active_edges)}
 
-    # Build routes: each route is a tuple (link_indices, channels)
+    # Build routes: each route is a tuple (link_indices, channels, src, dst, path)
+    # Skip routes with zero channel allocation
     routes = []
     for (src, dst, path), ch in channel_assignments.items():
+        if ch == 0:
+            continue
         link_indices = tuple(link_index[(u, v)] for u, v in zip(path[:-1], path[1:]))
-        routes.append((link_indices, ch))
+        routes.append((link_indices, ch, src, dst, path))
 
     total_channels = sum(channel_assignments.values())
     # print(f"\nTotal assigned channels for {name}: {total_channels}")
@@ -531,6 +534,7 @@ def generate_network_params(
         "name": name,
         "total_channels": total_channels,
         "links": links,
+        "link_nodes": active_edges,
         "routes": routes,
     }
 

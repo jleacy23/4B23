@@ -1,157 +1,417 @@
+
 ============================================================
   Results — Baseline
 ============================================================
 
   Network: Network 1
-    Fiber: NZ-DSF  |  Total capacity: 216.40 Tb/s  |  Amplifiers: 35
-      Route 0: NSR = -16.17 dB
-      Route 1: NSR = -14.15 dB
-      Route 2: NSR = -10.89 dB
-      Route 3: NSR = -13.93 dB
-      Route 4: NSR = -12.44 dB
-      Route 5: NSR = -16.17 dB
-      Route 6: NSR = -14.11 dB
-      Route 7: NSR = -16.15 dB
-      Route 8: NSR = -13.08 dB
-      Route 9: NSR = -17.60 dB
-      Route 10: NSR = -14.12 dB
-      Route 11: NSR = -16.09 dB
-      Route 12: NSR = -14.56 dB
-      Route 13: NSR = -17.35 dB
-      Route 14: NSR = -12.65 dB
-      Route 15: NSR = -13.97 dB
-      Route 16: NSR = -14.43 dB
-      Route 17: NSR = -14.83 dB
-      Route 18: NSR = -15.03 dB
-      Route 19: NSR = -17.64 dB
-      Route 20: NSR = -17.35 dB
-      Route 21: NSR = -14.72 dB
-    Fiber: PCSF  |  Total capacity: 224.00 Tb/s  |  Amplifiers: 21
-      Route 0: NSR = -18.94 dB
-      Route 1: NSR = -18.08 dB
-      Route 2: NSR = -15.26 dB
-      Route 3: NSR = -17.21 dB
-      Route 4: NSR = -16.42 dB
-      Route 5: NSR = -18.94 dB
-      Route 6: NSR = -17.37 dB
-      Route 7: NSR = -18.93 dB
-      Route 8: NSR = -17.01 dB
-      Route 9: NSR = -18.92 dB
-      Route 10: NSR = -18.05 dB
-      Route 11: NSR = -18.88 dB
-      Route 12: NSR = -17.67 dB
-      Route 13: NSR = -18.62 dB
-      Route 14: NSR = -16.66 dB
-      Route 15: NSR = -17.25 dB
-      Route 16: NSR = -17.51 dB
-      Route 17: NSR = -17.93 dB
-      Route 18: NSR = -18.10 dB
-      Route 19: NSR = -18.96 dB
-      Route 20: NSR = -18.62 dB
-      Route 21: NSR = -17.83 dB
-    Fiber: NDSF  |  Total capacity: 224.00 Tb/s  |  Amplifiers: 33
-      Route 0: NSR = -17.61 dB
-      Route 1: NSR = -16.06 dB
-      Route 2: NSR = -13.11 dB
-      Route 3: NSR = -16.54 dB
-      Route 4: NSR = -15.05 dB
-      Route 5: NSR = -17.61 dB
-      Route 6: NSR = -16.70 dB
-      Route 7: NSR = -17.59 dB
-      Route 8: NSR = -15.05 dB
-      Route 9: NSR = -18.58 dB
-      Route 10: NSR = -16.02 dB
-      Route 11: NSR = -17.53 dB
-      Route 12: NSR = -16.23 dB
-      Route 13: NSR = -18.31 dB
-      Route 14: NSR = -15.27 dB
-      Route 15: NSR = -15.86 dB
-      Route 16: NSR = -16.06 dB
-      Route 17: NSR = -16.54 dB
-      Route 18: NSR = -16.76 dB
-      Route 19: NSR = -18.62 dB
-      Route 20: NSR = -18.31 dB
-      Route 21: NSR = -16.42 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Route 0 (B→A): Channels = 12
+    Route 1 (C→B→A): Channels = 3
+    Route 2 (E→C→B→A): Channels = 2
+    Route 3 (E→D→B→A): Channels = 2
+    Route 4 (D→B→A): Channels = 3
+    Route 5 (D→C→B→A): Channels = 2
+    Route 6 (D→E→C→B→A): Channels = 1
+    Route 7 (A→B): Channels = 11
+    Route 8 (A→D→B): Channels = 3
+    Route 9 (A→D→C→B): Channels = 2
+    Route 10 (A→D→E→C→B): Channels = 2
+    Route 11 (A→B→C): Channels = 3
+    Route 12 (A→D→C): Channels = 6
+    Route 13 (A→B→D→C): Channels = 2
+    Route 14 (A→D→B→C): Channels = 2
+    Route 15 (A→D→E): Channels = 3
+    Route 16 (A→B→C→E): Channels = 2
+    Route 17 (A→D→C→E): Channels = 2
+    Route 18 (A→B→D→E): Channels = 2
+    Route 19 (A→D): Channels = 5
+    Route 20 (A→B→D): Channels = 2
+    Route 21 (A→B→C→D): Channels = 1
+    Route 22 (A→B→C→E→D): Channels = 1
+    Route 23 (B→D→A): Channels = 2
+    Route 24 (B→C→D→A): Channels = 2
+    Route 25 (B→C→E→D→A): Channels = 1
+    Route 26 (B→C): Channels = 2
+    Route 27 (B→D→C): Channels = 2
+    Route 28 (B→D→E→C): Channels = 2
+    Route 29 (B→C→E): Channels = 1
+    Route 30 (B→D→E): Channels = 2
+    Route 31 (B→C→D→E): Channels = 1
+    Route 32 (B→D): Channels = 2
+    Route 33 (B→C→D): Channels = 1
+    Route 34 (B→C→E→D): Channels = 1
+    Route 35 (C→D→A): Channels = 5
+    Route 36 (C→B→D→A): Channels = 2
+    Route 37 (C→E→D→A): Channels = 3
+    Route 38 (C→B): Channels = 2
+    Route 39 (C→D→B): Channels = 2
+    Route 40 (C→E→D→B): Channels = 2
+    Route 41 (C→E): Channels = 1
+    Route 42 (C→D→E): Channels = 1
+    Route 43 (C→B→D→E): Channels = 1
+    Route 44 (C→D): Channels = 1
+    Route 45 (C→B→D): Channels = 1
+    Route 46 (C→E→D): Channels = 1
+    Route 47 (E→D→A): Channels = 3
+    Route 48 (E→C→D→A): Channels = 2
+    Route 49 (E→D→B): Channels = 2
+    Route 50 (E→C→B): Channels = 1
+    Route 51 (E→C→D→B): Channels = 1
+    Route 52 (E→C): Channels = 1
+    Route 53 (E→D→C): Channels = 1
+    Route 54 (E→D→B→C): Channels = 1
+    Route 55 (E→D): Channels = 1
+    Route 56 (E→C→D): Channels = 1
+    Route 57 (E→C→B→D): Channels = 1
+    Route 58 (D→A): Channels = 5
+    Route 59 (D→B): Channels = 2
+    Route 60 (D→C→B): Channels = 1
+    Route 61 (D→E→C→B): Channels = 1
+    Route 62 (D→C): Channels = 1
+    Route 63 (D→B→C): Channels = 1
+    Route 64 (D→E→C): Channels = 1
+    Route 65 (D→E): Channels = 1
+    Route 66 (D→C→E): Channels = 1
+    Route 67 (D→B→C→E): Channels = 1
+    Fiber: NZ-DSF  |  Total capacity: 213.20 Tb/s  |  Amplifiers: 36
+      Node Birmingham (B): 48.40 Tb/s
+      Node Glasgow (E): 25.60 Tb/s
+      Node Leeds (D): 28.80 Tb/s
+      Node London (A): 72.80 Tb/s
+      Node Manchester (C): 37.60 Tb/s
+      Route 0 (B→A): NSR = -16.17 dB
+      Route 1 (C→B→A): NSR = -14.14 dB
+      Route 2 (E→C→B→A): NSR = -12.10 dB
+      Route 3 (E→D→B→A): NSR = -12.67 dB
+      Route 4 (D→B→A): NSR = -15.01 dB
+      Route 5 (D→C→B→A): NSR = -13.41 dB
+      Route 6 (D→E→C→B→A): NSR = -10.74 dB
+      Route 7 (A→B): NSR = -16.15 dB
+      Route 8 (A→D→B): NSR = -14.11 dB
+      Route 9 (A→D→C→B): NSR = -12.77 dB
+      Route 10 (A→D→E→C→B): NSR = -10.38 dB
+      Route 11 (A→B→C): NSR = -14.11 dB
+      Route 12 (A→D→C): NSR = -14.14 dB
+      Route 13 (A→B→D→C): NSR = -14.11 dB
+      Route 14 (A→D→B→C): NSR = -12.73 dB
+      Route 15 (A→D→E): NSR = -12.66 dB
+      Route 16 (A→B→C→E): NSR = -12.10 dB
+      Route 17 (A→D→C→E): NSR = -12.11 dB
+      Route 18 (A→B→D→E): NSR = -12.64 dB
+      Route 19 (A→D): NSR = -15.03 dB
+      Route 20 (A→B→D): NSR = -14.99 dB
+      Route 21 (A→B→C→D): NSR = -13.37 dB
+      Route 22 (A→B→C→E→D): NSR = -10.74 dB
+      Route 23 (B→D→A): NSR = -14.11 dB
+      Route 24 (B→C→D→A): NSR = -12.75 dB
+      Route 25 (B→C→E→D→A): NSR = -10.39 dB
+      Route 26 (B→C): NSR = -16.11 dB
+      Route 27 (B→D→C): NSR = -16.10 dB
+      Route 28 (B→D→E→C): NSR = -11.98 dB
+      Route 29 (B→C→E): NSR = -13.24 dB
+      Route 30 (B→D→E): NSR = -13.96 dB
+      Route 31 (B→C→D→E): NSR = -12.64 dB
+      Route 32 (B→D): NSR = -17.59 dB
+      Route 33 (B→C→D): NSR = -14.99 dB
+      Route 34 (B→C→E→D): NSR = -11.55 dB
+      Route 35 (C→D→A): NSR = -14.13 dB
+      Route 36 (C→B→D→A): NSR = -12.74 dB
+      Route 37 (C→E→D→A): NSR = -11.14 dB
+      Route 38 (C→B): NSR = -16.13 dB
+      Route 39 (C→D→B): NSR = -16.09 dB
+      Route 40 (C→E→D→B): NSR = -12.02 dB
+      Route 41 (C→E): NSR = -14.82 dB
+      Route 42 (C→D→E): NSR = -13.99 dB
+      Route 43 (C→B→D→E): NSR = -12.63 dB
+      Route 44 (C→D): NSR = -17.64 dB
+      Route 45 (C→B→D): NSR = -14.98 dB
+      Route 46 (C→E→D): NSR = -12.56 dB
+      Route 47 (E→D→A): NSR = -12.68 dB
+      Route 48 (E→C→D→A): NSR = -12.09 dB
+      Route 49 (E→D→B): NSR = -13.99 dB
+      Route 50 (E→C→B): NSR = -13.23 dB
+      Route 51 (E→C→D→B): NSR = -13.21 dB
+      Route 52 (E→C): NSR = -14.80 dB
+      Route 53 (E→D→C): NSR = -14.02 dB
+      Route 54 (E→D→B→C): NSR = -12.64 dB
+      Route 55 (E→D): NSR = -14.88 dB
+      Route 56 (E→C→D): NSR = -13.94 dB
+      Route 57 (E→C→B→D): NSR = -12.60 dB
+      Route 58 (D→A): NSR = -15.03 dB
+      Route 59 (D→B): NSR = -17.60 dB
+      Route 60 (D→C→B): NSR = -15.02 dB
+      Route 61 (D→E→C→B): NSR = -11.53 dB
+      Route 62 (D→C): NSR = -17.67 dB
+      Route 63 (D→B→C): NSR = -14.96 dB
+      Route 64 (D→E→C): NSR = -12.53 dB
+      Route 65 (D→E): NSR = -14.85 dB
+      Route 66 (D→C→E): NSR = -13.98 dB
+      Route 67 (D→B→C→E): NSR = -12.61 dB
+    Fiber: PCSF  |  Total capacity: 232.00 Tb/s  |  Amplifiers: 21
+      Node Birmingham (B): 51.20 Tb/s
+      Node Glasgow (E): 30.40 Tb/s
+      Node Leeds (D): 30.40 Tb/s
+      Node London (A): 80.00 Tb/s
+      Node Manchester (C): 40.00 Tb/s
+      Route 0 (B→A): NSR = -18.94 dB
+      Route 1 (C→B→A): NSR = -18.07 dB
+      Route 2 (E→C→B→A): NSR = -16.61 dB
+      Route 3 (E→D→B→A): NSR = -16.67 dB
+      Route 4 (D→B→A): NSR = -18.08 dB
+      Route 5 (D→C→B→A): NSR = -17.38 dB
+      Route 6 (D→E→C→B→A): NSR = -15.56 dB
+      Route 7 (A→B): NSR = -18.93 dB
+      Route 8 (A→D→B): NSR = -17.37 dB
+      Route 9 (A→D→C→B): NSR = -16.77 dB
+      Route 10 (A→D→E→C→B): NSR = -15.15 dB
+      Route 11 (A→B→C): NSR = -18.05 dB
+      Route 12 (A→D→C): NSR = -17.40 dB
+      Route 13 (A→B→D→C): NSR = -17.37 dB
+      Route 14 (A→D→B→C): NSR = -16.74 dB
+      Route 15 (A→D→E): NSR = -16.68 dB
+      Route 16 (A→B→C→E): NSR = -16.62 dB
+      Route 17 (A→D→C→E): NSR = -16.15 dB
+      Route 18 (A→B→D→E): NSR = -16.64 dB
+      Route 19 (A→D): NSR = -18.10 dB
+      Route 20 (A→B→D): NSR = -18.06 dB
+      Route 21 (A→B→C→D): NSR = -17.34 dB
+      Route 22 (A→B→C→E→D): NSR = -15.57 dB
+      Route 23 (B→D→A): NSR = -17.37 dB
+      Route 24 (B→C→D→A): NSR = -16.75 dB
+      Route 25 (B→C→E→D→A): NSR = -15.17 dB
+      Route 26 (B→C): NSR = -18.90 dB
+      Route 27 (B→D→C): NSR = -18.08 dB
+      Route 28 (B→D→E→C): NSR = -16.01 dB
+      Route 29 (B→C→E): NSR = -17.21 dB
+      Route 30 (B→D→E): NSR = -17.24 dB
+      Route 31 (B→C→D→E): NSR = -16.64 dB
+      Route 32 (B→D): NSR = -18.91 dB
+      Route 33 (B→C→D): NSR = -18.05 dB
+      Route 34 (B→C→E→D): NSR = -16.03 dB
+      Route 35 (C→D→A): NSR = -17.38 dB
+      Route 36 (C→B→D→A): NSR = -16.74 dB
+      Route 37 (C→E→D→A): NSR = -15.60 dB
+      Route 38 (C→B): NSR = -18.91 dB
+      Route 39 (C→D→B): NSR = -18.07 dB
+      Route 40 (C→E→D→B): NSR = -16.04 dB
+      Route 41 (C→E): NSR = -17.93 dB
+      Route 42 (C→D→E): NSR = -17.26 dB
+      Route 43 (C→B→D→E): NSR = -16.63 dB
+      Route 44 (C→D): NSR = -18.93 dB
+      Route 45 (C→B→D): NSR = -18.04 dB
+      Route 46 (C→E→D): NSR = -16.57 dB
+      Route 47 (E→D→A): NSR = -16.69 dB
+      Route 48 (E→C→D→A): NSR = -16.12 dB
+      Route 49 (E→D→B): NSR = -17.27 dB
+      Route 50 (E→C→B): NSR = -17.20 dB
+      Route 51 (E→C→D→B): NSR = -16.61 dB
+      Route 52 (E→C): NSR = -17.90 dB
+      Route 53 (E→D→C): NSR = -17.30 dB
+      Route 54 (E→D→B→C): NSR = -16.65 dB
+      Route 55 (E→D): NSR = -17.98 dB
+      Route 56 (E→C→D): NSR = -17.22 dB
+      Route 57 (E→C→B→D): NSR = -16.59 dB
+      Route 58 (D→A): NSR = -18.10 dB
+      Route 59 (D→B): NSR = -18.92 dB
+      Route 60 (D→C→B): NSR = -18.08 dB
+      Route 61 (D→E→C→B): NSR = -16.01 dB
+      Route 62 (D→C): NSR = -18.96 dB
+      Route 63 (D→B→C): NSR = -18.04 dB
+      Route 64 (D→E→C): NSR = -16.53 dB
+      Route 65 (D→E): NSR = -17.95 dB
+      Route 66 (D→C→E): NSR = -17.26 dB
+      Route 67 (D→B→C→E): NSR = -16.61 dB
+    Fiber: NDSF  |  Total capacity: 232.00 Tb/s  |  Amplifiers: 34
+      Node Birmingham (B): 51.20 Tb/s
+      Node Glasgow (E): 30.40 Tb/s
+      Node Leeds (D): 30.40 Tb/s
+      Node London (A): 80.00 Tb/s
+      Node Manchester (C): 40.00 Tb/s
+      Route 0 (B→A): NSR = -17.61 dB
+      Route 1 (C→B→A): NSR = -16.05 dB
+      Route 2 (E→C→B→A): NSR = -14.30 dB
+      Route 3 (E→D→B→A): NSR = -14.80 dB
+      Route 4 (D→B→A): NSR = -16.73 dB
+      Route 5 (D→C→B→A): NSR = -15.45 dB
+      Route 6 (D→E→C→B→A): NSR = -13.08 dB
+      Route 7 (A→B): NSR = -17.59 dB
+      Route 8 (A→D→B): NSR = -16.69 dB
+      Route 9 (A→D→C→B): NSR = -15.42 dB
+      Route 10 (A→D→E→C→B): NSR = -13.06 dB
+      Route 11 (A→B→C): NSR = -16.02 dB
+      Route 12 (A→D→C): NSR = -16.73 dB
+      Route 13 (A→B→D→C): NSR = -16.02 dB
+      Route 14 (A→D→B→C): NSR = -15.38 dB
+      Route 15 (A→D→E): NSR = -15.29 dB
+      Route 16 (A→B→C→E): NSR = -14.29 dB
+      Route 17 (A→D→C→E): NSR = -14.76 dB
+      Route 18 (A→B→D→E): NSR = -14.77 dB
+      Route 19 (A→D): NSR = -17.56 dB
+      Route 20 (A→B→D): NSR = -16.71 dB
+      Route 21 (A→B→C→D): NSR = -15.41 dB
+      Route 22 (A→B→C→E→D): NSR = -13.09 dB
+      Route 23 (B→D→A): NSR = -16.69 dB
+      Route 24 (B→C→D→A): NSR = -15.39 dB
+      Route 25 (B→C→E→D→A): NSR = -13.08 dB
+      Route 26 (B→C): NSR = -17.55 dB
+      Route 27 (B→D→C): NSR = -17.54 dB
+      Route 28 (B→D→E→C): NSR = -14.17 dB
+      Route 29 (B→C→E): NSR = -15.26 dB
+      Route 30 (B→D→E): NSR = -15.86 dB
+      Route 31 (B→C→D→E): NSR = -14.76 dB
+      Route 32 (B→D): NSR = -18.57 dB
+      Route 33 (B→C→D): NSR = -16.70 dB
+      Route 34 (B→C→E→D): NSR = -13.80 dB
+      Route 35 (C→D→A): NSR = -16.71 dB
+      Route 36 (C→B→D→A): NSR = -15.39 dB
+      Route 37 (C→E→D→A): NSR = -13.81 dB
+      Route 38 (C→B): NSR = -17.57 dB
+      Route 39 (C→D→B): NSR = -17.53 dB
+      Route 40 (C→E→D→B): NSR = -14.21 dB
+      Route 41 (C→E): NSR = -16.54 dB
+      Route 42 (C→D→E): NSR = -15.88 dB
+      Route 43 (C→B→D→E): NSR = -14.76 dB
+      Route 44 (C→D): NSR = -18.61 dB
+      Route 45 (C→B→D): NSR = -16.70 dB
+      Route 46 (C→E→D): NSR = -14.67 dB
+      Route 47 (E→D→A): NSR = -15.31 dB
+      Route 48 (E→C→D→A): NSR = -14.73 dB
+      Route 49 (E→D→B): NSR = -15.89 dB
+      Route 50 (E→C→B): NSR = -15.25 dB
+      Route 51 (E→C→D→B): NSR = -15.23 dB
+      Route 52 (E→C): NSR = -16.51 dB
+      Route 53 (E→D→C): NSR = -15.92 dB
+      Route 54 (E→D→B→C): NSR = -14.77 dB
+      Route 55 (E→D): NSR = -16.60 dB
+      Route 56 (E→C→D): NSR = -15.83 dB
+      Route 57 (E→C→B→D): NSR = -14.72 dB
+      Route 58 (D→A): NSR = -17.56 dB
+      Route 59 (D→B): NSR = -18.58 dB
+      Route 60 (D→C→B): NSR = -16.74 dB
+      Route 61 (D→E→C→B): NSR = -13.78 dB
+      Route 62 (D→C): NSR = -18.63 dB
+      Route 63 (D→B→C): NSR = -16.68 dB
+      Route 64 (D→E→C): NSR = -14.64 dB
+      Route 65 (D→E): NSR = -16.57 dB
+      Route 66 (D→C→E): NSR = -15.87 dB
+      Route 67 (D→B→C→E): NSR = -14.73 dB
 
   Network: Network 2
-    Fiber: NZ-DSF  |  Total capacity: 300.40 Tb/s  |  Amplifiers: 33
-      Route 0: NSR = -16.17 dB
-      Route 1: NSR = -12.23 dB
-      Route 2: NSR = -14.12 dB
-      Route 3: NSR = -16.10 dB
-      Route 4: NSR = -13.35 dB
-      Route 5: NSR = -12.52 dB
-      Route 6: NSR = -16.15 dB
-      Route 7: NSR = -14.13 dB
-      Route 8: NSR = -16.19 dB
-      Route 9: NSR = -13.40 dB
-      Route 10: NSR = -11.72 dB
-      Route 11: NSR = -16.10 dB
-      Route 12: NSR = -14.15 dB
-      Route 13: NSR = -16.17 dB
-      Route 14: NSR = -14.99 dB
-      Route 15: NSR = -12.73 dB
-      Route 16: NSR = -12.75 dB
-      Route 17: NSR = -13.33 dB
-      Route 18: NSR = -13.37 dB
-      Route 19: NSR = -14.97 dB
-      Route 20: NSR = -15.00 dB
-      Route 21: NSR = -15.03 dB
-      Route 22: NSR = -11.70 dB
-      Route 23: NSR = -12.72 dB
-      Route 24: NSR = -15.00 dB
-    Fiber: PCSF  |  Total capacity: 316.80 Tb/s  |  Amplifiers: 24
-      Route 0: NSR = -18.94 dB
-      Route 1: NSR = -16.78 dB
-      Route 2: NSR = -17.37 dB
-      Route 3: NSR = -18.09 dB
-      Route 4: NSR = -16.76 dB
-      Route 5: NSR = -16.50 dB
-      Route 6: NSR = -18.93 dB
-      Route 7: NSR = -17.38 dB
-      Route 8: NSR = -18.95 dB
-      Route 9: NSR = -17.39 dB
-      Route 10: NSR = -16.23 dB
-      Route 11: NSR = -18.09 dB
-      Route 12: NSR = -18.09 dB
-      Route 13: NSR = -18.94 dB
-      Route 14: NSR = -18.09 dB
-      Route 15: NSR = -16.76 dB
-      Route 16: NSR = -16.77 dB
-      Route 17: NSR = -16.75 dB
-      Route 18: NSR = -17.36 dB
-      Route 19: NSR = -18.07 dB
-      Route 20: NSR = -18.08 dB
-      Route 21: NSR = -18.10 dB
-      Route 22: NSR = -16.21 dB
-      Route 23: NSR = -16.74 dB
-      Route 24: NSR = -18.08 dB
-    Fiber: NDSF  |  Total capacity: 316.80 Tb/s  |  Amplifiers: 30
-      Route 0: NSR = -17.61 dB
-      Route 1: NSR = -14.45 dB
-      Route 2: NSR = -16.03 dB
-      Route 3: NSR = -17.54 dB
-      Route 4: NSR = -15.39 dB
-      Route 5: NSR = -15.19 dB
-      Route 6: NSR = -17.59 dB
-      Route 7: NSR = -16.04 dB
-      Route 8: NSR = -17.63 dB
-      Route 9: NSR = -15.44 dB
-      Route 10: NSR = -14.00 dB
-      Route 11: NSR = -17.54 dB
-      Route 12: NSR = -16.06 dB
-      Route 13: NSR = -17.61 dB
-      Route 14: NSR = -16.72 dB
-      Route 15: NSR = -14.87 dB
-      Route 16: NSR = -15.40 dB
-      Route 17: NSR = -15.37 dB
-      Route 18: NSR = -15.41 dB
-      Route 19: NSR = -16.69 dB
-      Route 20: NSR = -16.72 dB
-      Route 21: NSR = -17.56 dB
-      Route 22: NSR = -13.98 dB
-      Route 23: NSR = -14.86 dB
-      Route 24: NSR = -16.72 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Route 0 (A→D→E): Channels = 10
+    Route 1 (A→D): Channels = 15
+    Route 2 (A→B): Channels = 24
+    Route 3 (A→C→B): Channels = 2
+    Route 4 (A→C): Channels = 19
+    Route 5 (A→C→E): Channels = 3
+    Route 6 (B→A): Channels = 24
+    Route 7 (B→C→A): Channels = 2
+    Route 8 (B→C): Channels = 9
+    Route 9 (B→C→E): Channels = 6
+    Route 10 (B→C→E→D): Channels = 6
+    Route 11 (C→A): Channels = 19
+    Route 12 (C→B): Channels = 9
+    Route 13 (C→E): Channels = 4
+    Route 14 (C→E→D): Channels = 4
+    Route 15 (E→D→A): Channels = 10
+    Route 16 (E→C→A): Channels = 3
+    Route 17 (E→C→B): Channels = 6
+    Route 18 (E→C): Channels = 4
+    Route 19 (E→D): Channels = 4
+    Route 20 (D→A): Channels = 15
+    Route 21 (D→E→C→B): Channels = 6
+    Route 22 (D→E→C): Channels = 4
+    Route 23 (D→E): Channels = 4
+    Fiber: NZ-DSF  |  Total capacity: 323.20 Tb/s  |  Amplifiers: 32
+      Node Birmingham (B): 72.80 Tb/s
+      Node Glasgow (E): 39.20 Tb/s
+      Node Leeds (D): 42.40 Tb/s
+      Node London (A): 112.80 Tb/s
+      Node Manchester (C): 56.00 Tb/s
+      Route 0 (A→D→E): NSR = -12.75 dB
+      Route 1 (A→D): NSR = -15.03 dB
+      Route 2 (A→B): NSR = -16.15 dB
+      Route 3 (A→C→B): NSR = -14.11 dB
+      Route 4 (A→C): NSR = -16.10 dB
+      Route 5 (A→C→E): NSR = -13.33 dB
+      Route 6 (B→A): NSR = -16.15 dB
+      Route 7 (B→C→A): NSR = -14.11 dB
+      Route 8 (B→C): NSR = -16.15 dB
+      Route 9 (B→C→E): NSR = -13.36 dB
+      Route 10 (B→C→E→D): NSR = -11.69 dB
+      Route 11 (C→A): NSR = -16.10 dB
+      Route 12 (C→B): NSR = -16.15 dB
+      Route 13 (C→E): NSR = -14.97 dB
+      Route 14 (C→E→D): NSR = -12.72 dB
+      Route 15 (E→D→A): NSR = -12.75 dB
+      Route 16 (E→C→A): NSR = -13.33 dB
+      Route 17 (E→C→B): NSR = -13.36 dB
+      Route 18 (E→C): NSR = -14.97 dB
+      Route 19 (E→D): NSR = -15.00 dB
+      Route 20 (D→A): NSR = -15.03 dB
+      Route 21 (D→E→C→B): NSR = -11.69 dB
+      Route 22 (D→E→C): NSR = -12.72 dB
+      Route 23 (D→E): NSR = -15.00 dB
+    Fiber: PCSF  |  Total capacity: 339.20 Tb/s  |  Amplifiers: 23
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 43.20 Tb/s
+      Node Leeds (D): 46.40 Tb/s
+      Node London (A): 116.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+      Route 0 (A→D→E): NSR = -16.77 dB
+      Route 1 (A→D): NSR = -18.10 dB
+      Route 2 (A→B): NSR = -18.93 dB
+      Route 3 (A→C→B): NSR = -17.37 dB
+      Route 4 (A→C): NSR = -18.09 dB
+      Route 5 (A→C→E): NSR = -16.74 dB
+      Route 6 (B→A): NSR = -18.93 dB
+      Route 7 (B→C→A): NSR = -17.37 dB
+      Route 8 (B→C): NSR = -18.93 dB
+      Route 9 (B→C→E): NSR = -17.35 dB
+      Route 10 (B→C→E→D): NSR = -16.20 dB
+      Route 11 (C→A): NSR = -18.09 dB
+      Route 12 (C→B): NSR = -18.93 dB
+      Route 13 (C→E): NSR = -18.07 dB
+      Route 14 (C→E→D): NSR = -16.74 dB
+      Route 15 (E→D→A): NSR = -16.77 dB
+      Route 16 (E→C→A): NSR = -16.75 dB
+      Route 17 (E→C→B): NSR = -17.35 dB
+      Route 18 (E→C): NSR = -18.07 dB
+      Route 19 (E→D): NSR = -18.08 dB
+      Route 20 (D→A): NSR = -18.10 dB
+      Route 21 (D→E→C→B): NSR = -16.20 dB
+      Route 22 (D→E→C): NSR = -16.74 dB
+      Route 23 (D→E): NSR = -18.08 dB
+    Fiber: NDSF  |  Total capacity: 339.20 Tb/s  |  Amplifiers: 31
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 43.20 Tb/s
+      Node Leeds (D): 46.40 Tb/s
+      Node London (A): 116.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+      Route 0 (A→D→E): NSR = -15.40 dB
+      Route 1 (A→D): NSR = -17.56 dB
+      Route 2 (A→B): NSR = -17.59 dB
+      Route 3 (A→C→B): NSR = -16.01 dB
+      Route 4 (A→C): NSR = -17.54 dB
+      Route 5 (A→C→E): NSR = -15.37 dB
+      Route 6 (B→A): NSR = -17.59 dB
+      Route 7 (B→C→A): NSR = -16.02 dB
+      Route 8 (B→C): NSR = -17.59 dB
+      Route 9 (B→C→E): NSR = -15.40 dB
+      Route 10 (B→C→E→D): NSR = -13.97 dB
+      Route 11 (C→A): NSR = -17.54 dB
+      Route 12 (C→B): NSR = -17.59 dB
+      Route 13 (C→E): NSR = -16.69 dB
+      Route 14 (C→E→D): NSR = -14.86 dB
+      Route 15 (E→D→A): NSR = -15.40 dB
+      Route 16 (E→C→A): NSR = -15.37 dB
+      Route 17 (E→C→B): NSR = -15.40 dB
+      Route 18 (E→C): NSR = -16.69 dB
+      Route 19 (E→D): NSR = -16.72 dB
+      Route 20 (D→A): NSR = -17.56 dB
+      Route 21 (D→E→C→B): NSR = -13.97 dB
+      Route 22 (D→E→C): NSR = -14.86 dB
+      Route 23 (D→E): NSR = -16.72 dB
 
 
 ############################################################
@@ -159,482 +419,185 @@
 ############################################################
 
 ============================================================
-  Results — Worst case for Network 1 (edge removed: Network 1 without London–Birmingham)
+  Results — Worst case for Network 1 — same channel assignment (edge removed: Network 1 without London–Leeds)
 ============================================================
 
   Network: Network 1
-    Fiber: NZ-DSF  |  Total capacity: 77.20 Tb/s  |  Amplifiers: 32
-      Route 0: NSR = -12.04 dB
-      Route 1: NSR = -11.09 dB
-      Route 2: NSR = -10.39 dB
-      Route 3: NSR = -13.29 dB
-      Route 4: NSR = -13.19 dB
-      Route 5: NSR = -11.57 dB
-      Route 6: NSR = -11.18 dB
-      Route 7: NSR = -12.03 dB
-      Route 8: NSR = -14.99 dB
-      Route 9: NSR = -12.64 dB
-      Route 10: NSR = -14.00 dB
-      Route 11: NSR = -12.59 dB
-      Route 12: NSR = -13.89 dB
-      Route 13: NSR = -12.53 dB
-      Route 14: NSR = -10.35 dB
-      Route 15: NSR = -13.90 dB
-      Route 16: NSR = -12.51 dB
-      Route 17: NSR = -11.13 dB
-      Route 18: NSR = -12.57 dB
-      Route 19: NSR = -13.99 dB
-      Route 20: NSR = -12.58 dB
-      Route 21: NSR = -15.98 dB
-      Route 22: NSR = -15.81 dB
-      Route 23: NSR = -12.04 dB
-      Route 24: NSR = -13.89 dB
-      Route 25: NSR = -12.50 dB
-      Route 26: NSR = -17.42 dB
-      Route 27: NSR = -14.75 dB
-      Route 28: NSR = -13.98 dB
-      Route 29: NSR = -12.60 dB
-      Route 30: NSR = -16.00 dB
-      Route 31: NSR = -15.78 dB
-      Route 32: NSR = -13.88 dB
-      Route 33: NSR = -12.52 dB
-      Route 34: NSR = -17.40 dB
-      Route 35: NSR = -14.78 dB
-      Route 36: NSR = -12.64 dB
-      Route 37: NSR = -12.10 dB
-      Route 38: NSR = -11.15 dB
-      Route 39: NSR = -13.88 dB
-      Route 40: NSR = -13.30 dB
-      Route 41: NSR = -12.52 dB
-      Route 42: NSR = -13.18 dB
-      Route 43: NSR = -14.99 dB
-      Route 44: NSR = -13.89 dB
-      Route 45: NSR = -12.50 dB
-      Route 46: NSR = -14.85 dB
-      Route 47: NSR = -13.99 dB
-      Route 48: NSR = -12.60 dB
-      Route 49: NSR = -14.98 dB
-      Route 50: NSR = -17.40 dB
-      Route 51: NSR = -14.78 dB
-      Route 52: NSR = -11.58 dB
-      Route 53: NSR = -17.42 dB
-      Route 54: NSR = -14.75 dB
-      Route 55: NSR = -12.65 dB
-      Route 56: NSR = -14.85 dB
-    Fiber: PCSF  |  Total capacity: 97.60 Tb/s  |  Amplifiers: 20
-      Route 0: NSR = -16.02 dB
-      Route 1: NSR = -15.52 dB
-      Route 2: NSR = -15.18 dB
-      Route 3: NSR = -17.29 dB
-      Route 4: NSR = -16.51 dB
-      Route 5: NSR = -16.07 dB
-      Route 6: NSR = -15.66 dB
-      Route 7: NSR = -16.03 dB
-      Route 8: NSR = -18.09 dB
-      Route 9: NSR = -16.67 dB
-      Route 10: NSR = -17.21 dB
-      Route 11: NSR = -16.56 dB
-      Route 12: NSR = -17.12 dB
-      Route 13: NSR = -16.46 dB
-      Route 14: NSR = -15.14 dB
-      Route 15: NSR = -17.10 dB
-      Route 16: NSR = -16.47 dB
-      Route 17: NSR = -15.60 dB
-      Route 18: NSR = -16.57 dB
-      Route 19: NSR = -17.22 dB
-      Route 20: NSR = -16.51 dB
-      Route 21: NSR = -18.81 dB
-      Route 22: NSR = -17.74 dB
-      Route 23: NSR = -16.04 dB
-      Route 24: NSR = -17.13 dB
-      Route 25: NSR = -16.44 dB
-      Route 26: NSR = -18.75 dB
-      Route 27: NSR = -17.77 dB
-      Route 28: NSR = -17.17 dB
-      Route 29: NSR = -16.56 dB
-      Route 30: NSR = -18.83 dB
-      Route 31: NSR = -17.71 dB
-      Route 32: NSR = -17.08 dB
-      Route 33: NSR = -16.49 dB
-      Route 34: NSR = -18.68 dB
-      Route 35: NSR = -17.84 dB
-      Route 36: NSR = -16.65 dB
-      Route 37: NSR = -16.08 dB
-      Route 38: NSR = -15.60 dB
-      Route 39: NSR = -17.12 dB
-      Route 40: NSR = -17.30 dB
-      Route 41: NSR = -16.46 dB
-      Route 42: NSR = -16.48 dB
-      Route 43: NSR = -18.09 dB
-      Route 44: NSR = -17.10 dB
-      Route 45: NSR = -16.47 dB
-      Route 46: NSR = -17.95 dB
-      Route 47: NSR = -17.20 dB
-      Route 48: NSR = -16.59 dB
-      Route 49: NSR = -18.06 dB
-      Route 50: NSR = -18.73 dB
-      Route 51: NSR = -17.81 dB
-      Route 52: NSR = -16.08 dB
-      Route 53: NSR = -18.70 dB
-      Route 54: NSR = -17.81 dB
-      Route 55: NSR = -16.67 dB
-      Route 56: NSR = -17.95 dB
-    Fiber: NDSF  |  Total capacity: 97.60 Tb/s  |  Amplifiers: 31
-      Route 0: NSR = -14.69 dB
-      Route 1: NSR = -13.76 dB
-      Route 2: NSR = -13.08 dB
-      Route 3: NSR = -15.31 dB
-      Route 4: NSR = -15.20 dB
-      Route 5: NSR = -13.82 dB
-      Route 6: NSR = -13.87 dB
-      Route 7: NSR = -14.22 dB
-      Route 8: NSR = -16.72 dB
-      Route 9: NSR = -14.77 dB
-      Route 10: NSR = -15.88 dB
-      Route 11: NSR = -14.69 dB
-      Route 12: NSR = -16.45 dB
-      Route 13: NSR = -15.13 dB
-      Route 14: NSR = -13.05 dB
-      Route 15: NSR = -16.45 dB
-      Route 16: NSR = -15.12 dB
-      Route 17: NSR = -13.82 dB
-      Route 18: NSR = -15.20 dB
-      Route 19: NSR = -16.55 dB
-      Route 20: NSR = -15.17 dB
-      Route 21: NSR = -17.41 dB
-      Route 22: NSR = -17.23 dB
-      Route 23: NSR = -14.23 dB
-      Route 24: NSR = -15.77 dB
-      Route 25: NSR = -14.59 dB
-      Route 26: NSR = -18.41 dB
-      Route 27: NSR = -16.43 dB
-      Route 28: NSR = -16.52 dB
-      Route 29: NSR = -15.21 dB
-      Route 30: NSR = -17.44 dB
-      Route 31: NSR = -17.19 dB
-      Route 32: NSR = -15.75 dB
-      Route 33: NSR = -14.62 dB
-      Route 34: NSR = -18.36 dB
-      Route 35: NSR = -16.49 dB
-      Route 36: NSR = -15.27 dB
-      Route 37: NSR = -14.74 dB
-      Route 38: NSR = -13.82 dB
-      Route 39: NSR = -15.76 dB
-      Route 40: NSR = -15.33 dB
-      Route 41: NSR = -14.61 dB
-      Route 42: NSR = -15.17 dB
-      Route 43: NSR = -16.72 dB
-      Route 44: NSR = -15.76 dB
-      Route 45: NSR = -14.60 dB
-      Route 46: NSR = -16.57 dB
-      Route 47: NSR = -15.87 dB
-      Route 48: NSR = -14.72 dB
-      Route 49: NSR = -17.52 dB
-      Route 50: NSR = -18.39 dB
-      Route 51: NSR = -16.47 dB
-      Route 52: NSR = -13.83 dB
-      Route 53: NSR = -18.39 dB
-      Route 54: NSR = -16.45 dB
-      Route 55: NSR = -14.77 dB
-      Route 56: NSR = -16.57 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 142.80 Tb/s
+      Node Birmingham (B): 38.80 Tb/s
+      Node Glasgow (E): 19.60 Tb/s
+      Node Leeds (D): 20.80 Tb/s
+      Node London (A): 38.00 Tb/s
+      Node Manchester (C): 25.60 Tb/s
+    Fiber: PCSF  |  Total capacity: 152.00 Tb/s
+      Node Birmingham (B): 40.00 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 27.20 Tb/s
+    Fiber: NDSF  |  Total capacity: 152.00 Tb/s
+      Node Birmingham (B): 40.00 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 27.20 Tb/s
 
   Network: Network 2
-    Fiber: NZ-DSF  |  Total capacity: 300.40 Tb/s  |  Amplifiers: 33
-      Route 0: NSR = -16.17 dB
-      Route 1: NSR = -12.23 dB
-      Route 2: NSR = -14.12 dB
-      Route 3: NSR = -16.10 dB
-      Route 4: NSR = -13.35 dB
-      Route 5: NSR = -12.52 dB
-      Route 6: NSR = -16.15 dB
-      Route 7: NSR = -14.13 dB
-      Route 8: NSR = -16.19 dB
-      Route 9: NSR = -13.40 dB
-      Route 10: NSR = -11.72 dB
-      Route 11: NSR = -16.10 dB
-      Route 12: NSR = -14.15 dB
-      Route 13: NSR = -16.17 dB
-      Route 14: NSR = -14.99 dB
-      Route 15: NSR = -12.73 dB
-      Route 16: NSR = -12.75 dB
-      Route 17: NSR = -13.33 dB
-      Route 18: NSR = -13.37 dB
-      Route 19: NSR = -14.97 dB
-      Route 20: NSR = -15.00 dB
-      Route 21: NSR = -15.03 dB
-      Route 22: NSR = -11.70 dB
-      Route 23: NSR = -12.72 dB
-      Route 24: NSR = -15.00 dB
-    Fiber: PCSF  |  Total capacity: 316.80 Tb/s  |  Amplifiers: 24
-      Route 0: NSR = -18.94 dB
-      Route 1: NSR = -16.78 dB
-      Route 2: NSR = -17.37 dB
-      Route 3: NSR = -18.09 dB
-      Route 4: NSR = -16.76 dB
-      Route 5: NSR = -16.50 dB
-      Route 6: NSR = -18.93 dB
-      Route 7: NSR = -17.38 dB
-      Route 8: NSR = -18.95 dB
-      Route 9: NSR = -17.39 dB
-      Route 10: NSR = -16.23 dB
-      Route 11: NSR = -18.09 dB
-      Route 12: NSR = -18.09 dB
-      Route 13: NSR = -18.94 dB
-      Route 14: NSR = -18.09 dB
-      Route 15: NSR = -16.76 dB
-      Route 16: NSR = -16.77 dB
-      Route 17: NSR = -16.75 dB
-      Route 18: NSR = -17.36 dB
-      Route 19: NSR = -18.07 dB
-      Route 20: NSR = -18.08 dB
-      Route 21: NSR = -18.10 dB
-      Route 22: NSR = -16.21 dB
-      Route 23: NSR = -16.74 dB
-      Route 24: NSR = -18.08 dB
-    Fiber: NDSF  |  Total capacity: 316.80 Tb/s  |  Amplifiers: 30
-      Route 0: NSR = -17.61 dB
-      Route 1: NSR = -14.45 dB
-      Route 2: NSR = -16.03 dB
-      Route 3: NSR = -17.54 dB
-      Route 4: NSR = -15.39 dB
-      Route 5: NSR = -15.19 dB
-      Route 6: NSR = -17.59 dB
-      Route 7: NSR = -16.04 dB
-      Route 8: NSR = -17.63 dB
-      Route 9: NSR = -15.44 dB
-      Route 10: NSR = -14.00 dB
-      Route 11: NSR = -17.54 dB
-      Route 12: NSR = -16.06 dB
-      Route 13: NSR = -17.61 dB
-      Route 14: NSR = -16.72 dB
-      Route 15: NSR = -14.87 dB
-      Route 16: NSR = -15.40 dB
-      Route 17: NSR = -15.37 dB
-      Route 18: NSR = -15.41 dB
-      Route 19: NSR = -16.69 dB
-      Route 20: NSR = -16.72 dB
-      Route 21: NSR = -17.56 dB
-      Route 22: NSR = -13.98 dB
-      Route 23: NSR = -14.86 dB
-      Route 24: NSR = -16.72 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 251.20 Tb/s
+      Node Birmingham (B): 72.80 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 18.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 56.00 Tb/s
+    Fiber: PCSF  |  Total capacity: 259.20 Tb/s
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+    Fiber: NDSF  |  Total capacity: 259.20 Tb/s
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
 
 ============================================================
-  Results — Worst case for Network 2 (edge removed: Network 2 without London–Leeds)
+  Results — Worst case for Network 1 — re-routed (edge removed: Network 1 without London–Leeds)
 ============================================================
 
   Network: Network 1
-    Fiber: NZ-DSF  |  Total capacity: 216.40 Tb/s  |  Amplifiers: 35
-      Route 0: NSR = -16.17 dB
-      Route 1: NSR = -14.15 dB
-      Route 2: NSR = -10.89 dB
-      Route 3: NSR = -13.93 dB
-      Route 4: NSR = -12.44 dB
-      Route 5: NSR = -16.17 dB
-      Route 6: NSR = -14.11 dB
-      Route 7: NSR = -16.15 dB
-      Route 8: NSR = -13.08 dB
-      Route 9: NSR = -17.60 dB
-      Route 10: NSR = -14.12 dB
-      Route 11: NSR = -16.09 dB
-      Route 12: NSR = -14.56 dB
-      Route 13: NSR = -17.35 dB
-      Route 14: NSR = -12.65 dB
-      Route 15: NSR = -13.97 dB
-      Route 16: NSR = -14.43 dB
-      Route 17: NSR = -14.83 dB
-      Route 18: NSR = -15.03 dB
-      Route 19: NSR = -17.64 dB
-      Route 20: NSR = -17.35 dB
-      Route 21: NSR = -14.72 dB
-    Fiber: PCSF  |  Total capacity: 224.00 Tb/s  |  Amplifiers: 21
-      Route 0: NSR = -18.94 dB
-      Route 1: NSR = -18.08 dB
-      Route 2: NSR = -15.26 dB
-      Route 3: NSR = -17.21 dB
-      Route 4: NSR = -16.42 dB
-      Route 5: NSR = -18.94 dB
-      Route 6: NSR = -17.37 dB
-      Route 7: NSR = -18.93 dB
-      Route 8: NSR = -17.01 dB
-      Route 9: NSR = -18.92 dB
-      Route 10: NSR = -18.05 dB
-      Route 11: NSR = -18.88 dB
-      Route 12: NSR = -17.67 dB
-      Route 13: NSR = -18.62 dB
-      Route 14: NSR = -16.66 dB
-      Route 15: NSR = -17.25 dB
-      Route 16: NSR = -17.51 dB
-      Route 17: NSR = -17.93 dB
-      Route 18: NSR = -18.10 dB
-      Route 19: NSR = -18.96 dB
-      Route 20: NSR = -18.62 dB
-      Route 21: NSR = -17.83 dB
-    Fiber: NDSF  |  Total capacity: 224.00 Tb/s  |  Amplifiers: 33
-      Route 0: NSR = -17.61 dB
-      Route 1: NSR = -16.06 dB
-      Route 2: NSR = -13.11 dB
-      Route 3: NSR = -16.54 dB
-      Route 4: NSR = -15.05 dB
-      Route 5: NSR = -17.61 dB
-      Route 6: NSR = -16.70 dB
-      Route 7: NSR = -17.59 dB
-      Route 8: NSR = -15.05 dB
-      Route 9: NSR = -18.58 dB
-      Route 10: NSR = -16.02 dB
-      Route 11: NSR = -17.53 dB
-      Route 12: NSR = -16.23 dB
-      Route 13: NSR = -18.31 dB
-      Route 14: NSR = -15.27 dB
-      Route 15: NSR = -15.86 dB
-      Route 16: NSR = -16.06 dB
-      Route 17: NSR = -16.54 dB
-      Route 18: NSR = -16.76 dB
-      Route 19: NSR = -18.62 dB
-      Route 20: NSR = -18.31 dB
-      Route 21: NSR = -16.42 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 121.60 Tb/s  |  Amplifiers: 29
+      Node Birmingham (B): 29.20 Tb/s
+      Node Glasgow (E): 17.20 Tb/s
+      Node Leeds (D): 19.20 Tb/s
+      Node London (A): 36.80 Tb/s
+      Node Manchester (C): 19.20 Tb/s
+    Fiber: PCSF  |  Total capacity: 131.20 Tb/s  |  Amplifiers: 16
+      Node Birmingham (B): 30.40 Tb/s
+      Node Glasgow (E): 19.20 Tb/s
+      Node Leeds (D): 20.80 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 20.80 Tb/s
+    Fiber: NDSF  |  Total capacity: 131.20 Tb/s  |  Amplifiers: 30
+      Node Birmingham (B): 30.40 Tb/s
+      Node Glasgow (E): 19.20 Tb/s
+      Node Leeds (D): 20.80 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 20.80 Tb/s
 
   Network: Network 2
-    Fiber: NZ-DSF  |  Total capacity: 145.20 Tb/s  |  Amplifiers: 29
-      Route 0: NSR = -13.32 dB
-      Route 1: NSR = -11.97 dB
-      Route 2: NSR = -13.21 dB
-      Route 3: NSR = -12.05 dB
-      Route 4: NSR = -14.97 dB
-      Route 5: NSR = -11.55 dB
-      Route 6: NSR = -10.60 dB
-      Route 7: NSR = -11.47 dB
-      Route 8: NSR = -10.66 dB
-      Route 9: NSR = -12.57 dB
-      Route 10: NSR = -15.88 dB
-      Route 11: NSR = -13.83 dB
-      Route 12: NSR = -15.93 dB
-      Route 13: NSR = -13.80 dB
-      Route 14: NSR = -13.12 dB
-      Route 15: NSR = -11.88 dB
-      Route 16: NSR = -15.88 dB
-      Route 17: NSR = -13.92 dB
-      Route 18: NSR = -15.88 dB
-      Route 19: NSR = -13.83 dB
-      Route 20: NSR = -13.10 dB
-      Route 21: NSR = -11.90 dB
-      Route 22: NSR = -11.30 dB
-      Route 23: NSR = -10.47 dB
-      Route 24: NSR = -16.08 dB
-      Route 25: NSR = -13.80 dB
-      Route 26: NSR = -15.88 dB
-      Route 27: NSR = -13.92 dB
-      Route 28: NSR = -14.80 dB
-      Route 29: NSR = -12.34 dB
-      Route 30: NSR = -14.53 dB
-      Route 31: NSR = -14.75 dB
-    Fiber: PCSF  |  Total capacity: 152.00 Tb/s  |  Amplifiers: 17
-      Route 0: NSR = -16.73 dB
-      Route 1: NSR = -16.52 dB
-      Route 2: NSR = -17.22 dB
-      Route 3: NSR = -16.10 dB
-      Route 4: NSR = -18.07 dB
-      Route 5: NSR = -15.59 dB
-      Route 6: NSR = -15.42 dB
-      Route 7: NSR = -15.95 dB
-      Route 8: NSR = -15.09 dB
-      Route 9: NSR = -16.57 dB
-      Route 10: NSR = -18.76 dB
-      Route 11: NSR = -17.09 dB
-      Route 12: NSR = -17.91 dB
-      Route 13: NSR = -17.78 dB
-      Route 14: NSR = -16.50 dB
-      Route 15: NSR = -16.41 dB
-      Route 16: NSR = -18.76 dB
-      Route 17: NSR = -17.22 dB
-      Route 18: NSR = -18.74 dB
-      Route 19: NSR = -17.10 dB
-      Route 20: NSR = -17.08 dB
-      Route 21: NSR = -15.90 dB
-      Route 22: NSR = -15.71 dB
-      Route 23: NSR = -14.82 dB
-      Route 24: NSR = -18.07 dB
-      Route 25: NSR = -17.78 dB
-      Route 26: NSR = -18.74 dB
-      Route 27: NSR = -17.23 dB
-      Route 28: NSR = -17.90 dB
-      Route 29: NSR = -16.30 dB
-      Route 30: NSR = -17.63 dB
-      Route 31: NSR = -17.85 dB
-    Fiber: NDSF  |  Total capacity: 152.00 Tb/s  |  Amplifiers: 28
-      Route 0: NSR = -15.36 dB
-      Route 1: NSR = -14.14 dB
-      Route 2: NSR = -15.23 dB
-      Route 3: NSR = -14.24 dB
-      Route 4: NSR = -16.69 dB
-      Route 5: NSR = -13.79 dB
-      Route 5: NSR = -13.79 dB
-      Route 6: NSR = -12.91 dB
-      Route 7: NSR = -13.70 dB
-      Route 8: NSR = -12.98 dB
-      Route 9: NSR = -14.68 dB
-      Route 10: NSR = -17.32 dB
-      Route 11: NSR = -15.70 dB
-      Route 12: NSR = -17.37 dB
-      Route 13: NSR = -15.66 dB
-      Route 14: NSR = -15.13 dB
-      Route 15: NSR = -14.03 dB
-      Route 16: NSR = -17.32 dB
-      Route 17: NSR = -15.80 dB
-      Route 18: NSR = -17.31 dB
-      Route 19: NSR = -15.71 dB
-      Route 20: NSR = -15.09 dB
-      Route 21: NSR = -14.06 dB
-      Route 7: NSR = -13.70 dB
-      Route 8: NSR = -12.98 dB
-      Route 9: NSR = -14.68 dB
-      Route 10: NSR = -17.32 dB
-      Route 11: NSR = -15.70 dB
-      Route 12: NSR = -17.37 dB
-      Route 13: NSR = -15.66 dB
-      Route 14: NSR = -15.13 dB
-      Route 15: NSR = -14.03 dB
-      Route 16: NSR = -17.32 dB
-      Route 17: NSR = -15.80 dB
-      Route 18: NSR = -17.31 dB
-      Route 19: NSR = -15.71 dB
-      Route 20: NSR = -15.09 dB
-      Route 21: NSR = -14.06 dB
-      Route 13: NSR = -15.66 dB
-      Route 14: NSR = -15.13 dB
-      Route 15: NSR = -14.03 dB
-      Route 16: NSR = -17.32 dB
-      Route 17: NSR = -15.80 dB
-      Route 18: NSR = -17.31 dB
-      Route 19: NSR = -15.71 dB
-      Route 20: NSR = -15.09 dB
-      Route 21: NSR = -14.06 dB
-      Route 15: NSR = -14.03 dB
-      Route 16: NSR = -17.32 dB
-      Route 17: NSR = -15.80 dB
-      Route 18: NSR = -17.31 dB
-      Route 19: NSR = -15.71 dB
-      Route 20: NSR = -15.09 dB
-      Route 21: NSR = -14.06 dB
-      Route 22: NSR = -13.47 dB
-      Route 23: NSR = -12.74 dB
-      Route 17: NSR = -15.80 dB
-      Route 18: NSR = -17.31 dB
-      Route 19: NSR = -15.71 dB
-      Route 20: NSR = -15.09 dB
-      Route 21: NSR = -14.06 dB
-      Route 22: NSR = -13.47 dB
-      Route 23: NSR = -12.74 dB
-      Route 22: NSR = -13.47 dB
-      Route 23: NSR = -12.74 dB
-      Route 24: NSR = -17.52 dB
-      Route 24: NSR = -17.52 dB
-      Route 25: NSR = -15.66 dB
-      Route 25: NSR = -15.66 dB
-      Route 26: NSR = -17.31 dB
-      Route 26: NSR = -17.31 dB
-      Route 27: NSR = -15.81 dB
-      Route 27: NSR = -15.81 dB
-      Route 28: NSR = -16.51 dB
-      Route 29: NSR = -14.39 dB
-      Route 30: NSR = -16.20 dB
-      Route 31: NSR = -16.45 dB
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 323.20 Tb/s  |  Amplifiers: 32
+      Node Birmingham (B): 72.80 Tb/s
+      Node Glasgow (E): 39.20 Tb/s
+      Node Leeds (D): 42.40 Tb/s
+      Node London (A): 112.80 Tb/s
+      Node Manchester (C): 56.00 Tb/s
+    Fiber: PCSF  |  Total capacity: 339.20 Tb/s  |  Amplifiers: 23
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 43.20 Tb/s
+      Node Leeds (D): 46.40 Tb/s
+      Node London (A): 116.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+    Fiber: NDSF  |  Total capacity: 339.20 Tb/s  |  Amplifiers: 31
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 43.20 Tb/s
+      Node Leeds (D): 46.40 Tb/s
+      Node London (A): 116.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+
+============================================================
+  Results — Worst case for Network 2 — same channel assignment (edge removed: Network 2 without London–Leeds)
+============================================================
+
+  Network: Network 1
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 142.80 Tb/s
+      Node Birmingham (B): 38.80 Tb/s
+      Node Glasgow (E): 19.60 Tb/s
+      Node Leeds (D): 20.80 Tb/s
+      Node London (A): 38.00 Tb/s
+      Node Manchester (C): 25.60 Tb/s
+    Fiber: PCSF  |  Total capacity: 152.00 Tb/s
+      Node Birmingham (B): 40.00 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 27.20 Tb/s
+    Fiber: NDSF  |  Total capacity: 152.00 Tb/s
+      Node Birmingham (B): 40.00 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 40.00 Tb/s
+      Node Manchester (C): 27.20 Tb/s
+
+  Network: Network 2
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 251.20 Tb/s
+      Node Birmingham (B): 72.80 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 18.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 56.00 Tb/s
+    Fiber: PCSF  |  Total capacity: 259.20 Tb/s
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+    Fiber: NDSF  |  Total capacity: 259.20 Tb/s
+      Node Birmingham (B): 75.20 Tb/s
+      Node Glasgow (E): 27.20 Tb/s
+      Node Leeds (D): 22.40 Tb/s
+      Node London (A): 76.80 Tb/s
+      Node Manchester (C): 57.60 Tb/s
+
+============================================================
+  Results — Worst case for Network 2 — re-routed (edge removed: Network 2 without London–Leeds)
+============================================================
+
+  Network: Network 1
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 213.20 Tb/s  |  Amplifiers: 36
+      Node Birmingham (B): 48.40 Tb/s
+      Node Glasgow (E): 25.60 Tb/s
+      Node Leeds (D): 28.80 Tb/s
+      Node London (A): 72.80 Tb/s
+      Node Manchester (C): 37.60 Tb/s
+    Fiber: PCSF  |  Total capacity: 232.00 Tb/s  |  Amplifiers: 21
+      Node Birmingham (B): 51.20 Tb/s
+      Node Glasgow (E): 30.40 Tb/s
+      Node Leeds (D): 30.40 Tb/s
+      Node London (A): 80.00 Tb/s
+      Node Manchester (C): 40.00 Tb/s
+    Fiber: NDSF  |  Total capacity: 232.00 Tb/s  |  Amplifiers: 34
+      Node Birmingham (B): 51.20 Tb/s
+      Node Glasgow (E): 30.40 Tb/s
+      Node Leeds (D): 30.40 Tb/s
+      Node London (A): 80.00 Tb/s
+      Node Manchester (C): 40.00 Tb/s
+
+  Network: Network 2
+  Key: A = London, B = Birmingham, C = Manchester, D = Leeds, E = Glasgow
+    Fiber: NZ-DSF  |  Total capacity: 165.60 Tb/s  |  Amplifiers: 29
+      Node Birmingham (B): 36.80 Tb/s
+      Node Glasgow (E): 20.80 Tb/s
+      Node Leeds (D): 18.80 Tb/s
+      Node London (A): 59.60 Tb/s
+      Node Manchester (C): 29.60 Tb/s
+    Fiber: PCSF  |  Total capacity: 179.20 Tb/s  |  Amplifiers: 18
+      Node Birmingham (B): 38.40 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 24.00 Tb/s
+      Node London (A): 64.00 Tb/s
+      Node Manchester (C): 30.40 Tb/s
+    Fiber: NDSF  |  Total capacity: 179.20 Tb/s  |  Amplifiers: 28
+      Node Birmingham (B): 38.40 Tb/s
+      Node Glasgow (E): 22.40 Tb/s
+      Node Leeds (D): 24.00 Tb/s
+      Node London (A): 64.00 Tb/s
+      Node Manchester (C): 30.40 Tb/s
