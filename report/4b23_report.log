@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.4)  6 MAR 2026 17:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.4)  6 MAR 2026 17:39
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -372,15 +372,16 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <14.4> on input line 16.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 16.
+ [1
+
+{c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 75.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 75.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 75.
- [1
-
-{c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
+ [2] [3]
 Overfull \hbox (8.45204pt too wide) in paragraph at lines 219--227
  [][] 
  []
@@ -448,9 +449,9 @@ Here is how much of TeX's memory you used:
  42241 multiletter control sequences out of 15000+600000
  633219 words of font info for 58 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 84i,11n,104p,979b,895s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,11n,104p,974b,895s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on 4b23_report.pdf (8 pages, 148477 bytes).
+Output written on 4b23_report.pdf (8 pages, 148894 bytes).
 PDF statistics:
  89 PDF objects out of 1000 (max. 8388607)
  57 compressed objects within 1 object stream

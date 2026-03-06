@@ -16,10 +16,10 @@
 \maketitle
 
 \section{Abstract}
-
+This report explores the effect of network topology and fiber type on the capacity and resilience of a core optical network. For each topology, data was routed to maximize capacity using linear programming and channels were assigned to each route. The NSR present on a route for each fiber type was then used to find the maximum capacity and its corresponding fiber. Resilience was tested by recalculating the worst-case capacity after a single link outage, before and after re-routing. Results showed that directly linking busy nodes is beneficial and that more links improves resilience at greater fiber cost.
 
 \section{Introduction}
-A core optical network consists of several cities (nodes) connected by optical fiber links. An effective network should provide high capacity and be resilient to outages. High capacity is achieved by careful routing of data between nodes that balances the usage on each link, and the choice of an appropriate fiber type with periodic EDFA placement to minimize the noise experienced by each route and ensure a high enough signal power to be detected by a transceiver at a high data rate. Resilience depends heavily on the network topology. More links allow for more routes between any pair of nodes which reduces the impact of an outage, especially if re-routing is possible once an outage is identified. Two network topologies are compared in terms of best-case capacity, fiber and amplifier usage, and resilience to outages. Figure \ref{fig:networks} shows both of these networks connecting 5 UK cities.
+A core optical network consists of several cities (nodes) connected by optical fiber links. An effective network should provide high capacity and be resilient to outages. High capacity is achieved by careful routing of data between nodes that balances the usage on each link, and the choice of an appropriate fiber type with periodic EDFA placement to minimize the noise experienced by each route and ensure a high enough signal power to be detected by a transceiver at a high data rate. Resilience depends heavily on the network topology. More links allow for more routes between any pair of nodes which reduces the impact of an outage, especially if re-routing is possible once an outage is identified. Two network topologies are compared in terms of best-case capacity, fiber and amplifier usage, and resilience to outages.
 
 \begin{figure}[H]
 \centering

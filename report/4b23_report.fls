@@ -166,6 +166,8 @@ INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+OUTPUT 4b23_report.pdf
+INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi8.tfm
@@ -173,8 +175,6 @@ INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
-OUTPUT 4b23_report.pdf
-INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm
 INPUT 4b23_report.aux
 INPUT c:/Users/joele/AppData/Roaming/TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk
